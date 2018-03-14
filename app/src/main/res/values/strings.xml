@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">MyDeliciousOven</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="get">GET</string>
+    <string name="success">Success</string>
+    <string name="twoHundred">200</string>
+    <string name="errorResponseCode">Error response code:</string>
+    <string name="problemRetrivingJson">Problem retrieving JSON results.</string>
+    <string name="problemParsingJson">Problem parsing JSON results</string>
+    <string name="title_activity_recipe_details">RecipeDetails</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="noIngredients">No ingredients available</string>
+    <string name="title_activity_video">VideoActivity</string>
+</resources>
