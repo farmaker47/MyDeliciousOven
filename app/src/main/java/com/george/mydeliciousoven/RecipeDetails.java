@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ScrollView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,6 +31,7 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
     /*@BindView(R.id.linear_master_detail_tablet)LinearLayout linearForTablet;*/
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.scrollOfFrameLayouts)ScrollView mScrollView;
 
 
     @Override
@@ -37,6 +39,17 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_details);
         ButterKnife.bind(this);
+
+        //trying to save scroll position
+        if(savedInstanceState!=null){
+            final int[] position = savedInstanceState.getIntArray("ARTICLE_SCROLL_POSITION");
+            if(position != null)
+                mScrollView.post(new Runnable() {
+                    public void run() {
+                        mScrollView.scrollTo(position[0], position[1]);
+                    }
+                });
+        }
 
         setSupportActionBar(toolbar);
 
@@ -154,6 +167,14 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
             startActivity(intent);
         }
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putIntArray("ARTICLE_SCROLL_POSITION",
+                new int[]{ mScrollView.getScrollX(), mScrollView.getScrollY()});
     }
 
     @Override

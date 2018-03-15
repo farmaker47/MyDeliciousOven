@@ -124,6 +124,11 @@ public class StepsFragment extends Fragment implements StepsRecyclerAdapter.Step
         View stepsView = inflater.inflate(R.layout.fragment_steps, container, false);
         ButterKnife.bind(this, stepsView);
 
+        //restore recycler view at same position
+        if (savedInstanceState != null) {
+            savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
+        }
+
         recipeName = this.getArguments().getString(RECIPE_NAME_TO_PASS);
         Log.e("stepsFragment", recipeName);
 
