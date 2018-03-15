@@ -146,8 +146,8 @@ public class IngredientsFragment extends Fragment {
         public void onLoadFinished(Loader loader, Object data) {
 
             ArrayList<Ingredients> arrayIngr = (ArrayList<Ingredients>) data;
-            Ingredients ingo = arrayIngr.get(0);
-            Log.e("FragmentQuantity",ingo.getQuantity());
+           /* Ingredients ingo = arrayIngr.get(0);
+            Log.e("FragmentQuantity",ingo.getQuantity());*/
 
             if (arrayIngr.size() > 0) {
                 for (int j = 0; j < arrayIngr.size(); j++) {

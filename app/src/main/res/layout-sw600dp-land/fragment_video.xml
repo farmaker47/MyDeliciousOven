@@ -2,8 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.george.mydeliciousoven.VideoFragment"
-    android:layout_marginTop="4dp">
+    tools:context="com.george.mydeliciousoven.VideoFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,7 +12,10 @@
         <com.google.android.exoplayer2.ui.SimpleExoPlayerView
             android:id="@+id/exoPlayerView"
             android:layout_width="match_parent"
-            android:layout_height="200dp"></com.google.android.exoplayer2.ui.SimpleExoPlayerView>
+            android:layout_height="350dp"
+            android:layout_margin="2dp">
+
+        </com.google.android.exoplayer2.ui.SimpleExoPlayerView>
 
         <TextView
             android:id="@+id/videoTextView"
