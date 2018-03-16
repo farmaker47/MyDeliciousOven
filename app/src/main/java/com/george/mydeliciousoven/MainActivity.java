@@ -9,7 +9,11 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.FloatingActionButton;
+import android.support.test.espresso.IdlingResource;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -22,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.george.mydeliciousoven.idlingResource.SimpleIdlingResource;
 import com.george.mydeliciousoven.network.NetworkUtilities;
 
 import java.io.IOException;
@@ -51,11 +56,29 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.R
     @BindView(R.id.mainRecyclerView)
     RecyclerView mRecyclerView;
 
+    @Nullable
+    private SimpleIdlingResource mIdlingResource;
+
+    /**
+     * Only called from test, creates and returns a new {@link SimpleIdlingResource}.
+     */
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+        }
+        return mIdlingResource;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        // Get the IdlingResource instance
+        getIdlingResource();
 
         //Because json file from internet neverchanges I decide not to call everytime the loader to fetch data from internet.. So
         //I will fetch the data once and then app will query the SQLIte database
@@ -103,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.R
             //Query the already ready database
         }
 
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -113,6 +135,13 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.R
             public void onClick(View view) {
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+
     }
 
     @Override
@@ -149,6 +178,11 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.R
                 @Override
                 public ArrayList<Recipes> loadInBackground() {
 
+                    //Is idle = false
+                    if (mIdlingResource != null) {
+                        mIdlingResource.setIdleState(false);
+                    }
+
                     String queryUrl = args.getString(QUERY_INTERNET_BUNDLE);
                     if (queryUrl == null) {
                         //if there received string is empty just return
@@ -174,6 +208,7 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.R
                         e.printStackTrace();
                     }
 
+
                     return recipeNameList;
                 }
             };
@@ -185,6 +220,12 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.R
             ArrayList<Recipes> arrayL = (ArrayList<Recipes>) data;
             mRecipesList = arrayL;
             mGridAdapter.setRecipesData(mRecipesList);
+
+            //set idle to true
+            if (mIdlingResource != null) {
+                mIdlingResource.setIdleState(true);
+            }
+
 
             //restore recycler view position
             if(savedRecyclerLayoutState!=null){
