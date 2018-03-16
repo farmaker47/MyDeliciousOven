@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +62,9 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener{
     private static final String CURRENT_WINDOW = "current_window";
     private boolean playWhenReady = true;
     private static final String PLAY_WHEN_READY = "play_when_ready";
+    private static MediaSessionCompat mMediaSession;
+    private static final String TAG = VideoFragment.class.getSimpleName();
+    private PlaybackStateCompat.Builder mStateBuilder;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -131,9 +136,8 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener{
         //Set initial icon for Exoplayer
         mExoplayerView.setDefaultArtwork(BitmapFactory.decodeResource
                 (getResources(), R.drawable.question_mark));
-
-
-        /*initializePlayer(videoPassed);*/
+        // Initialize the Media Session.
+        initializeMediaSession();
 
         return rootViewVideo;
     }
@@ -174,6 +178,7 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener{
         super.onPause();
         if (Util.SDK_INT <= 23) {
             releasePlayer();
+            mMediaSession.setActive(false);
         }
     }
 
@@ -182,6 +187,7 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener{
         super.onStop();
         if (Util.SDK_INT > 23) {
             releasePlayer();
+            mMediaSession.setActive(false);
         }
     }
 
@@ -233,7 +239,14 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener{
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
 
-        //
+        if((playbackState == ExoPlayer.STATE_READY) && playWhenReady){
+            mStateBuilder.setState(PlaybackStateCompat.STATE_PLAYING,
+                    mExoPlayer.getCurrentPosition(), 1f);
+        } else if((playbackState == ExoPlayer.STATE_READY)){
+            mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
+                    mExoPlayer.getCurrentPosition(), 1f);
+        }
+        mMediaSession.setPlaybackState(mStateBuilder.build());
 
     }
 
@@ -293,10 +306,63 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener{
             currentWindow = mExoPlayer.getCurrentWindowIndex();
             playWhenReady = mExoPlayer.getPlayWhenReady();
             mExoPlayer.release();
+            mExoPlayer.removeListener(this);
             mExoPlayer = null;
         }
         /*mExoPlayer.stop();
         mExoPlayer.release();
         mExoPlayer = null;*/
+    }
+
+    private void initializeMediaSession() {
+
+        // Create a MediaSessionCompat.
+        mMediaSession = new MediaSessionCompat(getActivity(), TAG);
+
+        // Enable callbacks from MediaButtons and TransportControls.
+        mMediaSession.setFlags(
+                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
+                        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+
+        // Do not let MediaButtons restart the player when the app is not visible.
+        mMediaSession.setMediaButtonReceiver(null);
+
+        // Set an initial PlaybackState with ACTION_PLAY, so media buttons can start the player.
+        mStateBuilder = new PlaybackStateCompat.Builder()
+                .setActions(
+                        PlaybackStateCompat.ACTION_PLAY |
+                                PlaybackStateCompat.ACTION_PAUSE |
+                                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
+                                PlaybackStateCompat.ACTION_PLAY_PAUSE);
+
+        mMediaSession.setPlaybackState(mStateBuilder.build());
+
+
+        // MySessionCallback has methods that handle callbacks from a media controller.
+        mMediaSession.setCallback(new MySessionCallback());
+
+        // Start the Media Session since the activity is active.
+        mMediaSession.setActive(true);
+
+    }
+
+    /**
+     * Media Session Callbacks, where all external clients control the player.
+     */
+    private class MySessionCallback extends MediaSessionCompat.Callback {
+        @Override
+        public void onPlay() {
+            mExoPlayer.setPlayWhenReady(true);
+        }
+
+        @Override
+        public void onPause() {
+            mExoPlayer.setPlayWhenReady(false);
+        }
+
+        @Override
+        public void onSkipToPrevious() {
+            mExoPlayer.seekTo(0);
+        }
     }
 }
