@@ -10,10 +10,20 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.google.android.exoplayer2.ui.SimpleExoPlayerView
-            android:id="@+id/exoPlayerView"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"></com.google.android.exoplayer2.ui.SimpleExoPlayerView>
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/imageAboveExoplayer"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/exoplayerHeight"
+                android:src="@drawable/no_video"/>
+            <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+                android:id="@+id/exoPlayerView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/exoplayerHeight"></com.google.android.exoplayer2.ui.SimpleExoPlayerView>
+
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/videoTextView"

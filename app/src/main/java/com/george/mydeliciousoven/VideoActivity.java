@@ -18,7 +18,9 @@ public class VideoActivity extends AppCompatActivity implements VideoFragment.On
     private static final String VIDEO_OF_STEP = "video_of_step";
     private static final String DESCRIPTION_FOR_FRAGMENT = "description_for_fragment";
     private static final String VIDEO_FOR_FRAGMENT = "video_for_fragment";
-    private String descriptionPassed,videoPassed;
+    private static final String THUMBNAIL_FOR_FRAGMENT = "thumbnail_for_fragment";
+    private static final String THUMBNAIL_OF_STEP = "thumbnail_of_step";
+    private String descriptionPassed,videoPassed,thumbNailPassed;
     private static final String LOG_TAG = VideoActivity.class.getSimpleName();
 
     @Override
@@ -38,6 +40,10 @@ public class VideoActivity extends AppCompatActivity implements VideoFragment.On
                 videoPassed = intent.getStringExtra(VIDEO_OF_STEP);
                 Log.e(LOG_TAG, videoPassed);
             }
+            if(intent.hasExtra(THUMBNAIL_OF_STEP)){
+                thumbNailPassed = intent.getStringExtra(THUMBNAIL_OF_STEP);
+                Log.e(LOG_TAG+LOG_TAG, thumbNailPassed);
+            }
 
 
             FragmentManager fragmentManager = getSupportFragmentManager();
@@ -45,6 +51,7 @@ public class VideoActivity extends AppCompatActivity implements VideoFragment.On
             Bundle bundle = new Bundle();
             bundle.putString(DESCRIPTION_FOR_FRAGMENT, descriptionPassed);
             bundle.putString(VIDEO_FOR_FRAGMENT, videoPassed);
+            bundle.putString(THUMBNAIL_FOR_FRAGMENT,thumbNailPassed);
             // Creating a new ingredients fragment
 
             VideoFragment videoFragm = new VideoFragment();

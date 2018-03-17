@@ -20,10 +20,14 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
         StepsFragment.OnFragmentInteractionListener, VideoFragment.OnFragmentVideoInteractionListener {
 
     private static final String RECIPE_NAME_TO_PASS = "recipe_name_to_pass";
+
     private static final String DESCRIPTION_OF_STEP = "description_of_step";
     private static final String VIDEO_OF_STEP = "video_of_step";
     private static final String DESCRIPTION_FOR_FRAGMENT = "description_for_fragment";
     private static final String VIDEO_FOR_FRAGMENT = "video_for_fragment";
+    private static final String THUMBNAIL_FOR_FRAGMENT = "thumbnail_for_fragment";
+    private static final String THUMBNAIL_OF_STEP = "thumbnail_of_step";
+
     private String recipeName;
     private static final String LOG_TAG = RecipeDetails.class.getSimpleName();
     private boolean mTwoPaneDetails;
@@ -96,6 +100,7 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
                 Bundle bundle2 = new Bundle();
                 bundle2.putString(DESCRIPTION_FOR_FRAGMENT, "");
                 bundle2.putString(VIDEO_FOR_FRAGMENT, "");
+                bundle2.putString(THUMBNAIL_FOR_FRAGMENT,"");
 
                 VideoFragment videoFragm = new VideoFragment();
                 videoFragm.setArguments(bundle2);
@@ -146,13 +151,15 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
     }
 
     @Override
-    public void onFragmentInteraction(String description, String videoUrl) {
+    public void onFragmentInteraction(String description, String videoUrl, String thumbnailUrl) {
 
         bundleForVideo = new Bundle();
         bundleForVideo.putString(DESCRIPTION_OF_STEP, description);
         bundleForVideo.putString(VIDEO_OF_STEP, videoUrl);
         bundleForVideo.putString(DESCRIPTION_FOR_FRAGMENT, description);
         bundleForVideo.putString(VIDEO_FOR_FRAGMENT, videoUrl);
+        bundleForVideo.putString(THUMBNAIL_FOR_FRAGMENT,thumbnailUrl);
+        bundleForVideo.putString(THUMBNAIL_OF_STEP,thumbnailUrl);
 
         if (mTwoPaneDetails) {
             VideoFragment videoFragm = new VideoFragment();

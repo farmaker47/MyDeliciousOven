@@ -9,13 +9,27 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.google.android.exoplayer2.ui.SimpleExoPlayerView
-            android:id="@+id/exoPlayerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="2dp">
 
-        </com.google.android.exoplayer2.ui.SimpleExoPlayerView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/imageAboveExoplayer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="2dp"
+                android:src="@drawable/no_video"/>
+            <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+                android:id="@+id/exoPlayerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="2dp">
+
+            </com.google.android.exoplayer2.ui.SimpleExoPlayerView>
+
+
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/videoTextView"

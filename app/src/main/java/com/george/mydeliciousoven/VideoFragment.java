@@ -2,7 +2,7 @@ package com.george.mydeliciousoven;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -31,7 +32,9 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 
+import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -44,16 +47,21 @@ import butterknife.ButterKnife;
  * Use the {@link VideoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class VideoFragment extends Fragment implements ExoPlayer.EventListener{
+public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
     private String descriptionPassed, videoPassed;
+    private String thumbnailPassed = "";
     private static final String DESCRIPTION_FOR_FRAGMENT = "description_for_fragment";
     private static final String DESCRIPTION_STATE_FOR_FRAGMENT = "description_state_for_fragment";
     private static final String VIDEO_FOR_FRAGMENT = "video_for_fragment";
     private static final String VIDEO_STATE_FOR_FRAGMENT = "video_state_for_fragment";
+    private static final String THUMBNAIL_FOR_FRAGMENT = "thumbnail_for_fragment";
+    private static final String THUMB_STATE_FOR_FRAGMENT = "thumb_state_for_fragment";
+
     private SimpleExoPlayer mExoPlayer;
 
     private long playbackPosition;
@@ -75,6 +83,8 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener{
     TextView instructionsOfVideoTextView;
     @BindView(R.id.exoPlayerView)
     SimpleExoPlayerView mExoplayerView;
+    @BindView(R.id.imageAboveExoplayer)
+    ImageView imageAboveExo;
 
     private OnFragmentVideoInteractionListener mListener;
 
@@ -117,10 +127,13 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener{
 
         descriptionPassed = this.getArguments().getString(DESCRIPTION_FOR_FRAGMENT);
         videoPassed = this.getArguments().getString(VIDEO_FOR_FRAGMENT);
+        thumbnailPassed = this.getArguments().getString(THUMBNAIL_FOR_FRAGMENT);
 
         if (savedInstanceState != null) {
             descriptionPassed = savedInstanceState.getString(DESCRIPTION_STATE_FOR_FRAGMENT);
             videoPassed = savedInstanceState.getString(VIDEO_STATE_FOR_FRAGMENT);
+            thumbnailPassed = savedInstanceState.getString(THUMB_STATE_FOR_FRAGMENT);
+
             playbackPosition = savedInstanceState.getLong(PLAYBACK_POSITION);
             currentWindow = savedInstanceState.getInt(CURRENT_WINDOW);
             playWhenReady = savedInstanceState.getBoolean(PLAY_WHEN_READY);
@@ -134,8 +147,18 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener{
         Log.e("VideoFragment", videoPassed);
 
         //Set initial icon for Exoplayer
-        mExoplayerView.setDefaultArtwork(BitmapFactory.decodeResource
-                (getResources(), R.drawable.question_mark));
+        /*mExoplayerView.setDefaultArtwork(BitmapFactory.decodeResource
+                (getResources(), R.drawable.question_mark));*/
+
+        //if thumbnail is not present then we load an image in imageView
+        if (!thumbnailPassed.equals("") && !thumbnailPassed.endsWith(".mp4")) {
+            Picasso.with(getActivity()).load(thumbnailPassed).into(imageAboveExo);
+            mExoplayerView.setVisibility(View.INVISIBLE);
+        }else if(videoPassed.equals("")){
+            /*Picasso.with(getActivity()).load(R.drawable.question_mark).into(imageAboveExo);*/
+            mExoplayerView.setVisibility(View.INVISIBLE);
+        }
+
         // Initialize the Media Session.
         initializeMediaSession();
 
@@ -146,9 +169,11 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener{
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(DESCRIPTION_STATE_FOR_FRAGMENT, descriptionPassed);
         outState.putString(VIDEO_STATE_FOR_FRAGMENT, videoPassed);
-        outState.putLong(PLAYBACK_POSITION,playbackPosition);
-        outState.putInt(CURRENT_WINDOW,currentWindow);
-        outState.putBoolean(PLAY_WHEN_READY,playWhenReady);
+        outState.putString(THUMB_STATE_FOR_FRAGMENT, thumbnailPassed);
+
+        outState.putLong(PLAYBACK_POSITION, playbackPosition);
+        outState.putInt(CURRENT_WINDOW, currentWindow);
+        outState.putBoolean(PLAY_WHEN_READY, playWhenReady);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -195,7 +220,12 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener{
     public void onStart() {
         super.onStart();
         if (Util.SDK_INT > 23) {
-            initializePlayer(videoPassed);
+            if (thumbnailPassed.endsWith(".mp4")) {
+                initializePlayer(thumbnailPassed);
+                mExoplayerView.setVisibility(View.VISIBLE);
+            } else{
+                initializePlayer(videoPassed);
+            }
         }
     }
 
@@ -204,7 +234,12 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener{
         super.onResume();
         hideSystemUi();
         if ((Util.SDK_INT <= 23 || mExoPlayer == null)) {
-            initializePlayer(videoPassed);
+            if (thumbnailPassed.endsWith(".mp4")) {
+                initializePlayer(thumbnailPassed);
+                mExoplayerView.setVisibility(View.VISIBLE);
+            } else{
+                initializePlayer(videoPassed);
+            }
         }
     }
 
@@ -239,10 +274,10 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener{
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
 
-        if((playbackState == ExoPlayer.STATE_READY) && playWhenReady){
+        if ((playbackState == ExoPlayer.STATE_READY) && playWhenReady) {
             mStateBuilder.setState(PlaybackStateCompat.STATE_PLAYING,
                     mExoPlayer.getCurrentPosition(), 1f);
-        } else if((playbackState == ExoPlayer.STATE_READY)){
+        } else if ((playbackState == ExoPlayer.STATE_READY)) {
             mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
                     mExoPlayer.getCurrentPosition(), 1f);
         }
@@ -301,7 +336,7 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener{
      * Release ExoPlayer.
      */
     private void releasePlayer() {
-        if(mExoPlayer!=null){
+        if (mExoPlayer != null) {
             playbackPosition = mExoPlayer.getCurrentPosition();
             currentWindow = mExoPlayer.getCurrentWindowIndex();
             playWhenReady = mExoPlayer.getPlayWhenReady();

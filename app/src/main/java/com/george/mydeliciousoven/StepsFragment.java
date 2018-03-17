@@ -74,7 +74,7 @@ public class StepsFragment extends Fragment implements StepsRecyclerAdapter.Step
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(String string,String string2);
+        void onFragmentInteraction(String string,String string2,String string3);
     }
 
     /**
@@ -228,10 +228,10 @@ public class StepsFragment extends Fragment implements StepsRecyclerAdapter.Step
 
     @Override
     public void onListItemClick(int itemIndex) {
-        Toast.makeText(getActivity(), "Position = " + itemIndex, Toast.LENGTH_SHORT).show();
+        /*Toast.makeText(getActivity(), "Position = " + itemIndex, Toast.LENGTH_SHORT).show();*/
         Steps sted = mStepsList.get(itemIndex);
-        Log.e("ListItemFragment", sted.getDescription());
-        mListener.onFragmentInteraction(sted.getDescription(),sted.getVideoURL());
+        Log.e("ListItemFragment", sted.getThumbnailURL());
+        mListener.onFragmentInteraction(sted.getDescription(),sted.getVideoURL(),sted.getThumbnailURL());
     }
 
 

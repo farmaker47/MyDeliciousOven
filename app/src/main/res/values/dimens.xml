@@ -3,4 +3,5 @@
     <dimen name="recipeCard">250dp</dimen>
     <dimen name="stepsCard">100dp</dimen>
     <dimen name="tablet_linear_width">300dp</dimen>
+    <dimen name="exoplayerHeight">200dp</dimen>
 </resources>

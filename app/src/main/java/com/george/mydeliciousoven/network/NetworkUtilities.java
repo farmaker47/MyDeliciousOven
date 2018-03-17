@@ -283,8 +283,8 @@ public class NetworkUtilities {
                         thumbnailURL = stepsObject.optString("thumbnailURL");
 
                         stepsOfOven.add(new Steps(id,shortDescription,description,videoURL,thumbnailURL));
-                        Steps sT = stepsOfOven.get(0);
-                        Log.e("Steeeeeep",sT.getVideoURL());
+                        /*Steps sT = stepsOfOven.get(1);
+                        Log.e("Steeeeeep",sT.getVideoURL());*/
                     }
                 }
             }
