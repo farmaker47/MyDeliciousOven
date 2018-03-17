@@ -2,6 +2,7 @@ package com.george.mydeliciousoven;
 
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingResource;
+import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -31,7 +32,6 @@ public class MenuActivityAdapterTest {
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
-
     private IdlingResource mIdlingResource;
 
     // Registers any resource that needs to be synchronized with Espresso before the test is run.
@@ -45,8 +45,11 @@ public class MenuActivityAdapterTest {
     @Test
     public void clickAdapterViewPosition_opensDetailScreen(){
 
-        onData(anything()).inAdapterView(withId(R.id.mainRecyclerView)).atPosition(0).perform(click());
+        //find the main recycler view and click position 0
+        onView(withId(R.id.mainRecyclerView))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
+        //when new activity opens check the textView that has specific test
         onView(withId(R.id.ingredientsLabel)).check(matches(withText(LABEL)));
 
 

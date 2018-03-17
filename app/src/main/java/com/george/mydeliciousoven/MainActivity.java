@@ -34,8 +34,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity implements MainGridAdapter.RecipesClickItemListener {
 
@@ -55,6 +57,9 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.R
 
     @BindView(R.id.mainRecyclerView)
     RecyclerView mRecyclerView;
+    @BindView(R.id.fab) FloatingActionButton fab;
+    @BindString(R.string.tsekare_me_internet) String textForShare;
+    @BindString(R.string.send_app_header_of_intent) String sendDisplay;
 
     @Nullable
     private SimpleIdlingResource mIdlingResource;
@@ -88,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.R
         mRecyclerView.setHasFixedSize(true);
 
         //setting Context and column number for grid
-
         //Ckeck also for tablet
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             mGridLayoutManager = new GridLayoutManager(this, 1);
@@ -129,19 +133,16 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.R
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        /*fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                Intent shire = new Intent(Intent.ACTION_SEND);
+                shire.putExtra(Intent.EXTRA_TEXT, textForShare);
+                shire.setType("text/plain");
+                startActivity(Intent.createChooser(shire, sendDisplay));
             }
-        });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-
+        });*/
     }
 
     @Override
@@ -158,6 +159,16 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.R
         if (savedInstanceState != null) {
             savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
         }
+    }
+
+
+    @OnClick(R.id.fab)
+    public void clickFab(View view){
+        Intent shire = new Intent();
+        shire.setAction(Intent.ACTION_SEND);
+        shire.putExtra(Intent.EXTRA_TEXT, textForShare);
+        shire.setType("text/plain");
+        startActivity(Intent.createChooser(shire, sendDisplay));
     }
 
     //Loader to fetch data from internet URL

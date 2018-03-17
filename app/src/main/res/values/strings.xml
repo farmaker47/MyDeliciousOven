@@ -15,4 +15,6 @@
     <string name="noIngredients">No ingredients or no internet connection available</string>
     <string name="title_activity_video">VideoActivity</string>
     <string name="ingredientsLabel">Ingredients</string>
+    <string name="tsekare_me_internet">Download this marvelous app to bake delicous sweets!</string>
+    <string name="send_app_header_of_intent">Send to:</string>
 </resources>
