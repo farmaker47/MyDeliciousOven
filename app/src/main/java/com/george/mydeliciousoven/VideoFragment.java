@@ -139,16 +139,11 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
             playWhenReady = savedInstanceState.getBoolean(PLAY_WHEN_READY);
         }
 
-
         instructionsOfVideoTextView.setText(descriptionPassed);
         Log.e("VideoFragment", descriptionPassed);
 
         videoTextView.setText(videoPassed);
         Log.e("VideoFragment", videoPassed);
-
-        //Set initial icon for Exoplayer
-        /*mExoplayerView.setDefaultArtwork(BitmapFactory.decodeResource
-                (getResources(), R.drawable.question_mark));*/
 
         //if thumbnail is not present then we load an image in imageView
         if (!thumbnailPassed.equals("") && !thumbnailPassed.endsWith(".mp4")) {

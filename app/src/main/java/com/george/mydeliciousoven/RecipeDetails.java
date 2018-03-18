@@ -1,11 +1,11 @@
 package com.george.mydeliciousoven;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,14 +28,15 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
     private static final String THUMBNAIL_FOR_FRAGMENT = "thumbnail_for_fragment";
     private static final String THUMBNAIL_OF_STEP = "thumbnail_of_step";
 
-    private String recipeName;
+    private String recipeName, ingredientsFromFragment;
     private static final String LOG_TAG = RecipeDetails.class.getSimpleName();
     private boolean mTwoPaneDetails;
     private Bundle bundleForVideo;
     /*@BindView(R.id.linear_master_detail_tablet)LinearLayout linearForTablet;*/
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.scrollOfFrameLayouts)ScrollView mScrollView;
+    @BindView(R.id.scrollOfFrameLayouts)
+    ScrollView mScrollView;
 
 
     @Override
@@ -45,9 +46,9 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
         ButterKnife.bind(this);
 
         //trying to save scroll position
-        if(savedInstanceState!=null){
+        if (savedInstanceState != null) {
             final int[] position = savedInstanceState.getIntArray("ARTICLE_SCROLL_POSITION");
-            if(position != null)
+            if (position != null)
                 mScrollView.post(new Runnable() {
                     public void run() {
                         mScrollView.scrollTo(position[0], position[1]);
@@ -69,8 +70,7 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                updateWidgetWithIngredients(ingredientsFromFragment);
             }
         });
 
@@ -100,7 +100,7 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
                 Bundle bundle2 = new Bundle();
                 bundle2.putString(DESCRIPTION_FOR_FRAGMENT, "");
                 bundle2.putString(VIDEO_FOR_FRAGMENT, "");
-                bundle2.putString(THUMBNAIL_FOR_FRAGMENT,"");
+                bundle2.putString(THUMBNAIL_FOR_FRAGMENT, "");
 
                 VideoFragment videoFragm = new VideoFragment();
                 videoFragm.setArguments(bundle2);
@@ -158,8 +158,8 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
         bundleForVideo.putString(VIDEO_OF_STEP, videoUrl);
         bundleForVideo.putString(DESCRIPTION_FOR_FRAGMENT, description);
         bundleForVideo.putString(VIDEO_FOR_FRAGMENT, videoUrl);
-        bundleForVideo.putString(THUMBNAIL_FOR_FRAGMENT,thumbnailUrl);
-        bundleForVideo.putString(THUMBNAIL_OF_STEP,thumbnailUrl);
+        bundleForVideo.putString(THUMBNAIL_FOR_FRAGMENT, thumbnailUrl);
+        bundleForVideo.putString(THUMBNAIL_OF_STEP, thumbnailUrl);
 
         if (mTwoPaneDetails) {
             VideoFragment videoFragm = new VideoFragment();
@@ -181,16 +181,28 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
         super.onSaveInstanceState(outState);
 
         outState.putIntArray("ARTICLE_SCROLL_POSITION",
-                new int[]{ mScrollView.getScrollX(), mScrollView.getScrollY()});
+                new int[]{mScrollView.getScrollX(), mScrollView.getScrollY()});
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onFragmentInteractionIngredients(String ingredients) {
+        ingredientsFromFragment = ingredients;
+        Log.e("ingredientsINCOMING", ingredientsFromFragment);
 
     }
 
     @Override
     public void onFragmentInteraction(String string) {
+
+    }
+
+    private void updateWidgetWithIngredients(String ingredienti){
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        int[] appWidgetId = appWidgetManager.getAppWidgetIds(new ComponentName(this, OvenWidgetProvider.class));
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId,R.id.appwidget_text);
+
+        OvenWidgetProvider.updateWidgetWithIngredents(this,appWidgetManager,ingredienti,appWidgetId);
 
     }
 }
