@@ -17,6 +17,8 @@
     <string name="ingredientsLabel">Ingredients</string>
     <string name="tsekare_me_internet">Download this marvelous app to bake delicous sweets!</string>
     <string name="send_app_header_of_intent">Send to:</string>
-    <string name="appwidget_text">Ingredients of desired app</string>
+    <string name="appwidget_text">Ingredients of desired recipe</string>
     <string name="add_widget">Add widget</string>
+    <string name="ingredients_for">Ingredients for:</string>
+    <string name="appwidget_text2">Ingredients of desired recipe</string>
 </resources>

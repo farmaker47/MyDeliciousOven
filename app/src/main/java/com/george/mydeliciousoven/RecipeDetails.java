@@ -70,7 +70,7 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateWidgetWithIngredients(ingredientsFromFragment);
+                updateWidgetWithIngredients(ingredientsFromFragment,recipeName);
             }
         });
 
@@ -196,13 +196,13 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
 
     }
 
-    private void updateWidgetWithIngredients(String ingredienti){
+    private void updateWidgetWithIngredients(String ingredienti,String recipeName){
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int[] appWidgetId = appWidgetManager.getAppWidgetIds(new ComponentName(this, OvenWidgetProvider.class));
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId,R.id.appwidget_text);
 
-        OvenWidgetProvider.updateWidgetWithIngredents(this,appWidgetManager,ingredienti,appWidgetId);
+        OvenWidgetProvider.updateWidgetWithIngredents(this,appWidgetManager,ingredienti,recipeName,appWidgetId);
 
     }
 }

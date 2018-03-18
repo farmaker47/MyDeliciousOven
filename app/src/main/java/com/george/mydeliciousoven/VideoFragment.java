@@ -150,7 +150,6 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
             Picasso.with(getActivity()).load(thumbnailPassed).into(imageAboveExo);
             mExoplayerView.setVisibility(View.INVISIBLE);
         }else if(videoPassed.equals("")){
-            /*Picasso.with(getActivity()).load(R.drawable.question_mark).into(imageAboveExo);*/
             mExoplayerView.setVisibility(View.INVISIBLE);
         }
 
