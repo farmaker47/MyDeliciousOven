@@ -2,11 +2,13 @@ package com.george.mydeliciousoven;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -23,7 +25,7 @@ public class StepsRecyclerAdapter extends RecyclerView.Adapter<StepsRecyclerAdap
     private ArrayList<Steps> stepsList;
     private StepsClickItemListener stepsClickItemListener;
 
-    public StepsRecyclerAdapter(Context context, ArrayList<Steps> list,StepsClickItemListener listener){
+    public StepsRecyclerAdapter(Context context, ArrayList<Steps> list, StepsClickItemListener listener) {
         mContext = context;
         stepsList = list;
         stepsClickItemListener = listener;
@@ -37,7 +39,6 @@ public class StepsRecyclerAdapter extends RecyclerView.Adapter<StepsRecyclerAdap
     public StepsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.steps_fragment_item, parent, false);
-        Log.e("adapterName", "something");
         return new StepsViewHolder(v);
     }
 
@@ -45,7 +46,13 @@ public class StepsRecyclerAdapter extends RecyclerView.Adapter<StepsRecyclerAdap
     public void onBindViewHolder(StepsViewHolder holder, int position) {
 
         Steps step = stepsList.get(position);
+
         holder.smallSteps.setText(step.getShortDescription());
+        if (step.getThumbnailURL() != null && !step.getThumbnailURL().isEmpty()) {
+            Picasso.with(mContext).load(step.getThumbnailURL()).error(R.drawable.sugar_free).into(holder.imageThumb);
+        }else{
+            Picasso.with(mContext).load(R.drawable.sugar_free).into(holder.imageThumb);
+        }
     }
 
     @Override
@@ -53,9 +60,13 @@ public class StepsRecyclerAdapter extends RecyclerView.Adapter<StepsRecyclerAdap
         return stepsList.size();
     }
 
-    class StepsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class StepsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        @BindView(R.id.stepsInstructions)TextView smallSteps;
+        @BindView(R.id.stepsInstructions)
+        TextView smallSteps;
+        @BindView(R.id.imageOfSteps)
+        ImageView imageThumb;
+
         public StepsViewHolder(View itemView2) {
             super(itemView2);
 

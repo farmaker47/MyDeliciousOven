@@ -228,9 +228,7 @@ public class StepsFragment extends Fragment implements StepsRecyclerAdapter.Step
 
     @Override
     public void onListItemClick(int itemIndex) {
-        /*Toast.makeText(getActivity(), "Position = " + itemIndex, Toast.LENGTH_SHORT).show();*/
         Steps sted = mStepsList.get(itemIndex);
-        Log.e("ListItemFragment", sted.getThumbnailURL());
         mListener.onFragmentInteraction(sted.getDescription(),sted.getVideoURL(),sted.getThumbnailURL());
     }
 

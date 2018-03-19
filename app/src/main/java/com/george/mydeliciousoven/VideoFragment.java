@@ -48,7 +48,6 @@ import butterknife.ButterKnife;
  * create an instance of this fragment.
  */
 public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -140,10 +139,7 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
         }
 
         instructionsOfVideoTextView.setText(descriptionPassed);
-        Log.e("VideoFragment", descriptionPassed);
-
         videoTextView.setText(videoPassed);
-        Log.e("VideoFragment", videoPassed);
 
         //if thumbnail is not present then we load an image in imageView
         if (!thumbnailPassed.equals("") && !thumbnailPassed.endsWith(".mp4")) {
@@ -151,6 +147,8 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
             mExoplayerView.setVisibility(View.INVISIBLE);
         }else if(videoPassed.equals("")){
             mExoplayerView.setVisibility(View.INVISIBLE);
+        }else if(!thumbnailPassed.equals("") && !thumbnailPassed.endsWith(".mp4")&&!videoPassed.equals("")){
+            imageAboveExo.setVisibility(View.INVISIBLE);
         }
 
         // Initialize the Media Session.
@@ -168,11 +166,6 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
         outState.putLong(PLAYBACK_POSITION, playbackPosition);
         outState.putInt(CURRENT_WINDOW, currentWindow);
         outState.putBoolean(PLAY_WHEN_READY, playWhenReady);
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-
     }
 
     @Override
@@ -300,7 +293,6 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentVideoInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(String string);
     }
 
@@ -338,9 +330,6 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
             mExoPlayer.removeListener(this);
             mExoPlayer = null;
         }
-        /*mExoPlayer.stop();
-        mExoPlayer.release();
-        mExoPlayer = null;*/
     }
 
     private void initializeMediaSession() {

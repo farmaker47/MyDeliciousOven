@@ -17,6 +17,7 @@ import android.support.test.espresso.IdlingResource;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.R
     @BindView(R.id.fab) FloatingActionButton fab;
     @BindString(R.string.tsekare_me_internet) String textForShare;
     @BindString(R.string.send_app_header_of_intent) String sendDisplay;
+    @BindView(R.id.toolbar)Toolbar toolbar;
 
     @Nullable
     private SimpleIdlingResource mIdlingResource;
@@ -128,21 +130,11 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.R
             }
         } else {
             //Query the already ready database
+            //Not implemented as not
         }
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /*fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent shire = new Intent(Intent.ACTION_SEND);
-                shire.putExtra(Intent.EXTRA_TEXT, textForShare);
-                shire.setType("text/plain");
-                startActivity(Intent.createChooser(shire, sendDisplay));
-            }
-        });*/
     }
 
     @Override
@@ -237,7 +229,6 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.R
                 mIdlingResource.setIdleState(true);
             }
 
-
             //restore recycler view position
             if(savedRecyclerLayoutState!=null){
                 mGridLayoutManager.onRestoreInstanceState(savedRecyclerLayoutState);
@@ -250,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.R
         }
     };
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -271,12 +262,14 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.R
 
         return super.onOptionsItemSelected(item);
     }
-
+*/
     @Override
     public void onListItemClick(int itemIndex) {
         Intent intent = new Intent(MainActivity.this, RecipeDetails.class);
         Recipes rec = mRecipesList.get(itemIndex);
         intent.putExtra(RECIPE_NAME_TO_PASS, rec.getName());
-        startActivity(intent);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 }

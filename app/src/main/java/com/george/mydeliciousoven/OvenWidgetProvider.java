@@ -52,11 +52,9 @@ public class OvenWidgetProvider extends AppWidgetProvider {
         views.setRemoteAdapter(R.id.widget_list_view, intent);
         //set text to header
         Log.e("finalString", recipeName);
-        if (!recipeName.equals("")) {
-            views.setTextViewText(R.id.headerForWidget, context.getString(R.string.ingredients_for) + " " + recipeName);
-        }else{
-            views.setViewVisibility(R.id.headerForWidget, View.GONE);
-        }
+        views.setTextViewText(R.id.headerForWidget, context.getString(R.string.ingredients_for) + " " + recipeName);
+        views.setViewVisibility(R.id.headerForWidget, View.VISIBLE);
+
         //Setting click listener to open MainActivity
         Intent appIntent = new Intent(context, MainActivity.class);
         PendingIntent appPendingIntent = PendingIntent.getActivity(context, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -95,4 +93,3 @@ public class OvenWidgetProvider extends AppWidgetProvider {
 
     }
 }
-

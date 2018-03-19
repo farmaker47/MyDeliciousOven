@@ -1,13 +1,15 @@
 package com.george.mydeliciousoven;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -24,7 +26,7 @@ public class MainGridAdapter extends RecyclerView.Adapter<MainGridAdapter.MainVi
     private ArrayList<Recipes> recipesList;
     private RecipesClickItemListener recipesClickItemListener;
 
-    public MainGridAdapter(Context context,ArrayList<Recipes> list,RecipesClickItemListener listener) {
+    public MainGridAdapter(Context context, ArrayList<Recipes> list, RecipesClickItemListener listener) {
         mContext = context;
         recipesList = list;
         recipesClickItemListener = listener;
@@ -39,7 +41,6 @@ public class MainGridAdapter extends RecyclerView.Adapter<MainGridAdapter.MainVi
     public MainViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recipes_list_item, parent, false);
-        Log.e("adapterName", "something");
         return new MainViewHolder(v);
     }
 
@@ -47,20 +48,31 @@ public class MainGridAdapter extends RecyclerView.Adapter<MainGridAdapter.MainVi
     public void onBindViewHolder(MainViewHolder holder, int position) {
         Recipes recipes = recipesList.get(position);
         holder.name.setText(recipes.getName());
+        if (recipes.getImage() != null && !recipes.getImage().isEmpty()) {
+            Picasso.with(mContext).load(recipes.getImage()).error(R.drawable.sugar_flo).into(holder.image);
+        } else {
+            Picasso.with(mContext).load(R.drawable.sugar_flo).into(holder.image);
+        }
+
         Log.e("adapterName", recipes.getName());
+        Log.e("adapterNameImage", recipes.getImage());
 
     }
 
 
     @Override
     public int getItemCount() {
-        Log.e("LISTSize", String.valueOf(recipesList.size()));
         return recipesList.size();
     }
 
     class MainViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        @BindView(R.id.recipesName) TextView name;
+        @BindView(R.id.recipesName)
+        TextView name;
+        /*@BindView(R.id.linearBackImageMain)LinearLayout linearBack;*/
+        @BindView(R.id.imageBackMain)
+        ImageView image;
+
 
         public MainViewHolder(View itemView) {
             super(itemView);

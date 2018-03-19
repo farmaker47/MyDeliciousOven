@@ -7,11 +7,13 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,7 +22,6 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
         StepsFragment.OnFragmentInteractionListener, VideoFragment.OnFragmentVideoInteractionListener {
 
     private static final String RECIPE_NAME_TO_PASS = "recipe_name_to_pass";
-
     private static final String DESCRIPTION_OF_STEP = "description_of_step";
     private static final String VIDEO_OF_STEP = "video_of_step";
     private static final String DESCRIPTION_FOR_FRAGMENT = "description_for_fragment";
@@ -32,6 +33,7 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
     private static final String LOG_TAG = RecipeDetails.class.getSimpleName();
     private boolean mTwoPaneDetails;
     private Bundle bundleForVideo;
+    private ActionBar ab;
     /*@BindView(R.id.linear_master_detail_tablet)LinearLayout linearForTablet;*/
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -65,12 +67,15 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
             Log.e(LOG_TAG, recipeName);
         }
 
+        ab = getSupportActionBar();
+        ab.setTitle(recipeName);
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateWidgetWithIngredients(ingredientsFromFragment,recipeName);
+                updateWidgetWithIngredients(ingredientsFromFragment, recipeName);
             }
         });
 
@@ -196,13 +201,15 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
 
     }
 
-    private void updateWidgetWithIngredients(String ingredienti,String recipeName){
+    private void updateWidgetWithIngredients(String ingredienti, String recipeName) {
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int[] appWidgetId = appWidgetManager.getAppWidgetIds(new ComponentName(this, OvenWidgetProvider.class));
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId,R.id.appwidget_text);
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.appwidget_text);
 
-        OvenWidgetProvider.updateWidgetWithIngredents(this,appWidgetManager,ingredienti,recipeName,appWidgetId);
+        OvenWidgetProvider.updateWidgetWithIngredents(this, appWidgetManager, ingredienti, recipeName, appWidgetId);
+
+        Toast.makeText(RecipeDetails.this, recipeName + " " + getString(R.string.isDesired),Toast.LENGTH_LONG).show();
 
     }
 }
