@@ -48,9 +48,12 @@ public class MainGridAdapter extends RecyclerView.Adapter<MainGridAdapter.MainVi
     public void onBindViewHolder(MainViewHolder holder, int position) {
         Recipes recipes = recipesList.get(position);
         holder.name.setText(recipes.getName());
-        Log.e("STRINGeMPTY","-"+recipes.getImage()+"-");
+
+
+        //if there is no image just load a drawable from drawable folder
         if (recipes.getImage() != null && !recipes.getImage().isEmpty()) {
             Picasso.with(mContext).load(recipes.getImage()).error(R.drawable.sugar_flo).into(holder.image);
+
         } else {
             Picasso.with(mContext).load(R.drawable.sugar_flo).into(holder.image);
         }

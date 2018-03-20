@@ -125,7 +125,7 @@ public class NetworkUtilities {
                 id2 = recipesObject.optString("id");
                 name = recipesObject.optString("name");
                 servings = recipesObject.optString("servings");
-                image = recipesObject.optString("image","noImage");
+                image = recipesObject.getString("image");
                 recipes.add(new Recipes(id2,name,servings,image));
 
 
@@ -291,8 +291,6 @@ public class NetworkUtilities {
                         thumbnailURL = stepsObject.getString("thumbnailURL");
 
                         stepsOfOven.add(new Steps(id,shortDescription,description,videoURL,thumbnailURL));
-                        /*Steps sT = stepsOfOven.get(1);
-                        Log.e("Steeeeeep",sT.getVideoURL());*/
                     }
                 }
             }
