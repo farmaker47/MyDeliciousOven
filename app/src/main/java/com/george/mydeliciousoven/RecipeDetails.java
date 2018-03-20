@@ -3,8 +3,10 @@ package com.george.mydeliciousoven;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class RecipeDetails extends AppCompatActivity implements IngredientsFragment.OnFragmentInteractionListener,
         StepsFragment.OnFragmentInteractionListener, VideoFragment.OnFragmentVideoInteractionListener {
@@ -29,7 +32,16 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
     private static final String THUMBNAIL_FOR_FRAGMENT = "thumbnail_for_fragment";
     private static final String THUMBNAIL_OF_STEP = "thumbnail_of_step";
 
+    private long playbackPositionOnresume;
+    private int currentWindowOnResume;
+    private boolean playWhenReadyOnResume = true;
+    private static final String PLAYBACK_POSITION = "playback_position";
+    private static final String CURRENT_WINDOW = "current_window";
+    private static final String PLAY_WHEN_READY = "play_when_ready";
+
     private String recipeName, ingredientsFromFragment;
+    private String descriptionPassed, videoPassed;
+    private String thumbnailPassed = "";
     private static final String LOG_TAG = RecipeDetails.class.getSimpleName();
     private boolean mTwoPaneDetails;
     private Bundle bundleForVideo;
@@ -39,6 +51,7 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
     Toolbar toolbar;
     @BindView(R.id.scrollOfFrameLayouts)
     ScrollView mScrollView;
+    @BindView(R.id.fab)FloatingActionButton fab;
 
 
     @Override
@@ -60,7 +73,6 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
 
         setSupportActionBar(toolbar);
 
-
         Intent intent = getIntent();
         if (intent.hasExtra(RECIPE_NAME_TO_PASS)) {
             recipeName = intent.getStringExtra(RECIPE_NAME_TO_PASS);
@@ -70,20 +82,13 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
         ab = getSupportActionBar();
         ab.setTitle(recipeName);
 
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateWidgetWithIngredients(ingredientsFromFragment, recipeName);
-            }
-        });
-
         if (findViewById(R.id.linear_master_detail_tablet) != null && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
 
             mTwoPaneDetails = true;
+            Log.e("TwoPane","twopane");
 
             if (savedInstanceState == null) {
+                Log.e("TwoPane","twopaneNULL");
                 //the first two fragments in the left
                 FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -111,6 +116,30 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
                 videoFragm.setArguments(bundle2);
                 // Add the fragment to its container using a transaction
                 fragmentManager.beginTransaction().add(R.id.video_details_container_tablet, videoFragm).commit();
+            }else{
+                Log.e("TwoPaneDescription","TwoPaneDescription");
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                playbackPositionOnresume = sharedPreferences.getLong(PLAYBACK_POSITION,0);
+                currentWindowOnResume = sharedPreferences.getInt(CURRENT_WINDOW,0);
+                playWhenReadyOnResume = sharedPreferences.getBoolean(PLAY_WHEN_READY,true);
+                descriptionPassed = sharedPreferences.getString(DESCRIPTION_FOR_FRAGMENT,"");
+                videoPassed = sharedPreferences.getString(VIDEO_FOR_FRAGMENT,"");
+                thumbnailPassed = sharedPreferences.getString(THUMBNAIL_FOR_FRAGMENT,"");
+                //When coming from videoactivity landscape and we go to recipedetails landscape two pane
+                //the video fragment in the right
+                Bundle bundle3 = new Bundle();
+                bundle3.putLong(PLAYBACK_POSITION, playbackPositionOnresume);
+                bundle3.putInt(CURRENT_WINDOW, currentWindowOnResume);
+                bundle3.putBoolean(PLAY_WHEN_READY, playWhenReadyOnResume);
+                bundle3.putString(DESCRIPTION_FOR_FRAGMENT, descriptionPassed);
+                bundle3.putString(VIDEO_FOR_FRAGMENT, videoPassed);
+                bundle3.putString(THUMBNAIL_FOR_FRAGMENT, thumbnailPassed);
+
+                VideoFragment videoFragm = new VideoFragment();
+                videoFragm.setArguments(bundle3);
+                // Add the fragment to its container using a transaction
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.video_details_container_tablet, videoFragm).commit();
             }
 
         } else if (findViewById(R.id.linear_master_detail_tablet) != null && getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -155,6 +184,7 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
 
     }
 
+
     @Override
     public void onFragmentInteraction(String description, String videoUrl, String thumbnailUrl) {
 
@@ -192,13 +222,15 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
     @Override
     public void onFragmentInteractionIngredients(String ingredients) {
         ingredientsFromFragment = ingredients;
-        Log.e("ingredientsINCOMING", ingredientsFromFragment);
-
     }
 
     @Override
-    public void onFragmentInteraction(String string) {
+    public void onFragmentInteraction(long playbaAKPosition, int currentWINDOW, boolean playwhenready, String description, String thumbnail, String video) {
+    }
 
+    @OnClick(R.id.fab)
+    public void clickFabToWidget(View view){
+        updateWidgetWithIngredients(ingredientsFromFragment, recipeName);
     }
 
     private void updateWidgetWithIngredients(String ingredienti, String recipeName) {
@@ -212,4 +244,5 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
         Toast.makeText(RecipeDetails.this, recipeName + " " + getString(R.string.isDesired),Toast.LENGTH_LONG).show();
 
     }
+
 }

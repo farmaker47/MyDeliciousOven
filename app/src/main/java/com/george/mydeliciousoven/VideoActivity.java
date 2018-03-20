@@ -8,6 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class VideoActivity extends AppCompatActivity implements VideoFragment.OnFragmentVideoInteractionListener {
 
 
@@ -20,12 +23,22 @@ public class VideoActivity extends AppCompatActivity implements VideoFragment.On
     private String descriptionPassed, videoPassed, thumbNailPassed;
     private static final String LOG_TAG = VideoActivity.class.getSimpleName();
 
+    /*private long playbackPosition;
+    private int currentWindow;
+    private boolean playWhenReady = true;
+    private static final String PLAYBACK_POSITION = "playback_position";
+    private static final String CURRENT_WINDOW = "current_window";
+    private static final String PLAY_WHEN_READY = "play_when_ready";*/
+
     private ActionBar ab;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
+        ButterKnife.bind(this);
 
 
         if (savedInstanceState == null) {
@@ -50,7 +63,10 @@ public class VideoActivity extends AppCompatActivity implements VideoFragment.On
             Bundle bundle = new Bundle();
             bundle.putString(DESCRIPTION_FOR_FRAGMENT, descriptionPassed);
             bundle.putString(VIDEO_FOR_FRAGMENT, videoPassed);
-            bundle.putString(THUMBNAIL_FOR_FRAGMENT, thumbNailPassed);
+            bundle.putString(THUMBNAIL_FOR_FRAGMENT, thumbNailPassed);/*
+            bundle.putLong(PLAYBACK_POSITION,playbackPosition);
+            bundle.putInt(CURRENT_WINDOW,currentWindow);
+            bundle.putBoolean(PLAY_WHEN_READY,playWhenReady);*/
 
             // Creating a new ingredients fragment
             VideoFragment videoFragm = new VideoFragment();
@@ -59,25 +75,16 @@ public class VideoActivity extends AppCompatActivity implements VideoFragment.On
             fragmentManager.beginTransaction().add(R.id.video_details_container, videoFragm).commit();
         }
 
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
 
         ab = getSupportActionBar();
         ab.setTitle(R.string.recipesVideo);
     }
 
     @Override
-    public void onFragmentInteraction(String string) {
-
+    public void onFragmentInteraction(long playbaAKPosition, int currentWINDOW, boolean playwhenready,String description,String thumbnail,String video) {
+        /*playbackPosition = playbaAKPosition;
+        currentWindow = currentWINDOW;
+        playWhenReady = playwhenready;*/
     }
 }

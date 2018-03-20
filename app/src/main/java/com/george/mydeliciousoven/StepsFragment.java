@@ -1,6 +1,8 @@
 package com.george.mydeliciousoven;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -139,14 +141,23 @@ public class StepsFragment extends Fragment implements StepsRecyclerAdapter.Step
         mStepsAdapter = new StepsRecyclerAdapter(getActivity(), mStepsList, this);
         mRecyclerSteps.setAdapter(mStepsAdapter);
 
-        //Init loader
-        android.support.v4.app.LoaderManager loaderManager = getActivity().getSupportLoaderManager();
-        Loader<String> internetLoader = loaderManager.getLoader(STEPS_LOADER);
-        if (internetLoader == null) {
-            loaderManager.initLoader(STEPS_LOADER, null, mLoaderSteps);
+        //Upon creation we check if there is internet connection
+        ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        // If there is a network connection, fetch data
+        if (networkInfo != null && networkInfo.isConnected()) {
+            //Init loader
+            android.support.v4.app.LoaderManager loaderManager = getActivity().getSupportLoaderManager();
+            Loader<String> internetLoader = loaderManager.getLoader(STEPS_LOADER);
+            if (internetLoader == null) {
+                loaderManager.initLoader(STEPS_LOADER, null, mLoaderSteps);
+            } else {
+                loaderManager.restartLoader(STEPS_LOADER, null, mLoaderSteps);
+            }
         } else {
-            loaderManager.restartLoader(STEPS_LOADER, null, mLoaderSteps);
+            ///Toast No internet
         }
+
 
         return stepsView;
     }

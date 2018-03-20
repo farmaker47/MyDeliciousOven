@@ -2,12 +2,14 @@ package com.george.mydeliciousoven;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +36,6 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 
-import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -64,10 +65,10 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
     private SimpleExoPlayer mExoPlayer;
 
     private long playbackPosition;
-    private static final String PLAYBACK_POSITION = "playback_position";
     private int currentWindow;
-    private static final String CURRENT_WINDOW = "current_window";
     private boolean playWhenReady = true;
+    private static final String PLAYBACK_POSITION = "playback_position";
+    private static final String CURRENT_WINDOW = "current_window";
     private static final String PLAY_WHEN_READY = "play_when_ready";
     private static MediaSessionCompat mMediaSession;
     private static final String TAG = VideoFragment.class.getSimpleName();
@@ -84,6 +85,7 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
     SimpleExoPlayerView mExoplayerView;
     @BindView(R.id.imageAboveExoplayer)
     ImageView imageAboveExo;
+    @BindView(R.id.cardVideoFragment) CardView cardView;
 
     private OnFragmentVideoInteractionListener mListener;
 
@@ -99,7 +101,6 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
      * @param param2 Parameter 2.
      * @return A new instance of fragment VideoFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static VideoFragment newInstance(String param1, String param2) {
         VideoFragment fragment = new VideoFragment();
         Bundle args = new Bundle();
@@ -124,10 +125,6 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
         View rootViewVideo = inflater.inflate(R.layout.fragment_video, container, false);
         ButterKnife.bind(this, rootViewVideo);
 
-        descriptionPassed = this.getArguments().getString(DESCRIPTION_FOR_FRAGMENT);
-        videoPassed = this.getArguments().getString(VIDEO_FOR_FRAGMENT);
-        thumbnailPassed = this.getArguments().getString(THUMBNAIL_FOR_FRAGMENT);
-
         if (savedInstanceState != null) {
             descriptionPassed = savedInstanceState.getString(DESCRIPTION_STATE_FOR_FRAGMENT);
             videoPassed = savedInstanceState.getString(VIDEO_STATE_FOR_FRAGMENT);
@@ -136,19 +133,35 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
             playbackPosition = savedInstanceState.getLong(PLAYBACK_POSITION);
             currentWindow = savedInstanceState.getInt(CURRENT_WINDOW);
             playWhenReady = savedInstanceState.getBoolean(PLAY_WHEN_READY);
+        }else{
+            Log.e("twopane","vidoeFromLandscape");
+            descriptionPassed = this.getArguments().getString(DESCRIPTION_FOR_FRAGMENT);
+            videoPassed = this.getArguments().getString(VIDEO_FOR_FRAGMENT);
+            thumbnailPassed = this.getArguments().getString(THUMBNAIL_FOR_FRAGMENT);
+
+            playbackPosition = this.getArguments().getLong(PLAYBACK_POSITION);
+            currentWindow = this.getArguments().getInt(CURRENT_WINDOW);
+            playWhenReady = true;
         }
 
         instructionsOfVideoTextView.setText(descriptionPassed);
         videoTextView.setText(videoPassed);
 
-        //if thumbnail is not present then we load an image in imageView
         if (!thumbnailPassed.equals("") && !thumbnailPassed.endsWith(".mp4")) {
             Picasso.with(getActivity()).load(thumbnailPassed).into(imageAboveExo);
             mExoplayerView.setVisibility(View.INVISIBLE);
-        }else if(videoPassed.equals("")){
+            Log.e("thumbAvalable", "thumbAvailable");
+        } else if (videoPassed.equals("") && descriptionPassed.equals("")) {
+            Log.e("thumbAvalableDES", "thumbAvailableDES");
             mExoplayerView.setVisibility(View.INVISIBLE);
-        }else if(!thumbnailPassed.equals("") && !thumbnailPassed.endsWith(".mp4")&&!videoPassed.equals("")){
+            Picasso.with(getActivity()).load(R.drawable.sugar_free).into(imageAboveExo);
+            cardView.setVisibility(View.INVISIBLE);
+        } else if (videoPassed.equals("")) {
+            mExoplayerView.setVisibility(View.INVISIBLE);
+            Log.e("thumbAvalableNOT", "thumbAvailableNOT");
+        } else if (!thumbnailPassed.equals("") && !thumbnailPassed.endsWith(".mp4") && !videoPassed.equals("")) {
             imageAboveExo.setVisibility(View.INVISIBLE);
+            Log.e("thumbAvalableYES", "thumbAvailableYES");
         }
 
         // Initialize the Media Session.
@@ -185,7 +198,11 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
         mListener = null;
     }
 
-    @Override
+    //I found a tutorial which it was saying that"Before API Level 24 there is no guarantee of onStop being called.
+    // So we have to release the player as early as possible in onPause. Starting with API Level 24 (which brought multi and split window mode)
+    // onStop is guaranteed to be called and in the paused mode our activity is eventually still visible. Hence we need to wait releasing until onStop."
+    //BUT IT DOESNT WORK IN  NOUGAT TABLET--> So I decided to put it inside traaditional onPause method.....
+    /*@Override
     public void onPause() {
         super.onPause();
         if (Util.SDK_INT <= 23) {
@@ -201,8 +218,27 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
             releasePlayer();
             mMediaSession.setActive(false);
         }
+    }*/
+    @Override
+    public void onPause() {
+        super.onPause();
+        releasePlayer();
+        mMediaSession.setActive(false);
+        //when going back to Recipedetails to seek video position
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putLong(PLAYBACK_POSITION,playbackPosition);
+        editor.putInt(CURRENT_WINDOW,currentWindow);
+        editor.putBoolean(PLAY_WHEN_READY, playWhenReady);
+        editor.putString(DESCRIPTION_FOR_FRAGMENT,descriptionPassed);
+        editor.putString(THUMBNAIL_FOR_FRAGMENT,thumbnailPassed);
+        editor.putString(VIDEO_FOR_FRAGMENT,videoPassed);
+        editor.apply();
     }
 
+    //Starting with API level 24 Android supports multiple windows.
+    // As our app can be visible but not active in split window mode, we need to initialize the player in onStart.
+    // Before API level 24 we wait as long as possible until we grab resources, so we wait until onResume before initializing the player.
     @Override
     public void onStart() {
         super.onStart();
@@ -210,7 +246,7 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
             if (thumbnailPassed.endsWith(".mp4")) {
                 initializePlayer(thumbnailPassed);
                 mExoplayerView.setVisibility(View.VISIBLE);
-            } else{
+            } else {
                 initializePlayer(videoPassed);
             }
         }
@@ -224,7 +260,7 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
             if (thumbnailPassed.endsWith(".mp4")) {
                 initializePlayer(thumbnailPassed);
                 mExoplayerView.setVisibility(View.VISIBLE);
-            } else{
+            } else {
                 initializePlayer(videoPassed);
             }
         }
@@ -293,8 +329,9 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentVideoInteractionListener {
-        void onFragmentInteraction(String string);
+        void onFragmentInteraction(long playbackposition, int currentWindow, boolean playwhenready,String description,String thumbnail,String video);
     }
+
 
     //initialize Exoplayer
     private void initializePlayer(String mediaUri) {

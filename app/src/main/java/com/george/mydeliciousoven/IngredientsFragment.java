@@ -1,6 +1,9 @@
 package com.george.mydeliciousoven;
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,9 +11,11 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.george.mydeliciousoven.network.NetworkUtilities;
@@ -40,7 +45,6 @@ public class IngredientsFragment extends Fragment {
     private String jsonResultsIngredients,recipeName,stringForExpandable;
     private static final String RECIPE_NAME_TO_PASS = "recipe_name_to_pass";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -88,13 +92,21 @@ public class IngredientsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_ingredients, container, false);
         ButterKnife.bind(this,rootView);
 
-        //Begin loader
-        android.support.v4.app.LoaderManager loaderManager = getActivity().getSupportLoaderManager();
-        Loader<String> internetLoader = loaderManager.getLoader(INGREDIENTS_LOADER);
-        if (internetLoader == null) {
-            loaderManager.initLoader(INGREDIENTS_LOADER, null, mLoaderIngredients);
+        //Upon creation we check if there is internet connection
+        ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        // If there is a network connection, fetch data
+        if (networkInfo != null && networkInfo.isConnected()) {
+            //Begin loader
+            android.support.v4.app.LoaderManager loaderManager = getActivity().getSupportLoaderManager();
+            Loader<String> internetLoader = loaderManager.getLoader(INGREDIENTS_LOADER);
+            if (internetLoader == null) {
+                loaderManager.initLoader(INGREDIENTS_LOADER, null, mLoaderIngredients);
+            } else {
+                loaderManager.restartLoader(INGREDIENTS_LOADER, null, mLoaderIngredients);
+            }
         } else {
-            loaderManager.restartLoader(INGREDIENTS_LOADER, null, mLoaderIngredients);
+            ///Toast No internet
         }
 
         stringForExpandable = "";
@@ -164,6 +176,8 @@ public class IngredientsFragment extends Fragment {
                     stringForExpandable += total;
                 }
                 mTextIngredients.setText(stringForExpandable);
+
+
             } else {
                 mTextIngredients.setText(getResources().getString(R.string.noIngredients));
             }

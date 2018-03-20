@@ -51,7 +51,9 @@ public class NetworkUtilities {
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setReadTimeout(10000 /* milliseconds */);
             urlConnection.setConnectTimeout(15000 /* milliseconds */);
-            urlConnection.setRequestMethod(context.getString(R.string.get));
+            if(urlConnection!=null){
+                urlConnection.setRequestMethod(context.getString(R.string.get));
+            }
             urlConnection.connect();
 
             // If the request was successful (response code 200),
@@ -117,7 +119,7 @@ public class NetworkUtilities {
                 id2 = recipesObject.optString("id");
                 name = recipesObject.optString("name");
                 servings = recipesObject.optString("servings");
-                image = recipesObject.optString("image");
+                image = recipesObject.optString("image","noImage");
                 recipes.add(new Recipes(id2,name,servings,image));
 
 
@@ -280,7 +282,7 @@ public class NetworkUtilities {
                         shortDescription = stepsObject.optString("shortDescription");
                         description = stepsObject.optString("description");
                         videoURL = stepsObject.optString("videoURL");
-                        thumbnailURL = stepsObject.optString("thumbnailURL");
+                        thumbnailURL = stepsObject.optString("thumbnailURL","noThumbnail");
 
                         stepsOfOven.add(new Steps(id,shortDescription,description,videoURL,thumbnailURL));
                         /*Steps sT = stepsOfOven.get(1);
