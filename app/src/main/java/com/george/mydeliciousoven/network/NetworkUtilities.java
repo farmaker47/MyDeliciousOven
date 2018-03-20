@@ -51,7 +51,7 @@ public class NetworkUtilities {
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setReadTimeout(10000 /* milliseconds */);
             urlConnection.setConnectTimeout(15000 /* milliseconds */);
-            if(urlConnection!=null){
+            if(urlConnection!=null&&context!=null){
                 urlConnection.setRequestMethod(context.getString(R.string.get));
             }
             urlConnection.connect();
@@ -61,12 +61,18 @@ public class NetworkUtilities {
             if (urlConnection.getResponseCode() == 200) {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readFromStream(inputStream);
-                Log.d(context.getString(R.string.success), context.getString(R.string.twoHundred));
+                if (context!=null) {
+                    Log.d(context.getString(R.string.success), context.getString(R.string.twoHundred));
+                }
             } else {
-                Log.d(LOG_TAG, context.getString(R.string.errorResponseCode) + urlConnection.getResponseCode());
+                if (context!=null) {
+                    Log.d(LOG_TAG, context.getString(R.string.errorResponseCode) + urlConnection.getResponseCode());
+                }
             }
         } catch (IOException e) {
-            Log.e(LOG_TAG, context.getString(R.string.problemRetrivingJson), e);
+            if (context!=null) {
+                Log.e(LOG_TAG, context.getString(R.string.problemRetrivingJson), e);
+            }
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -282,7 +288,7 @@ public class NetworkUtilities {
                         shortDescription = stepsObject.optString("shortDescription");
                         description = stepsObject.optString("description");
                         videoURL = stepsObject.optString("videoURL");
-                        thumbnailURL = stepsObject.optString("thumbnailURL","noThumbnail");
+                        thumbnailURL = stepsObject.getString("thumbnailURL");
 
                         stepsOfOven.add(new Steps(id,shortDescription,description,videoURL,thumbnailURL));
                         /*Steps sT = stepsOfOven.get(1);

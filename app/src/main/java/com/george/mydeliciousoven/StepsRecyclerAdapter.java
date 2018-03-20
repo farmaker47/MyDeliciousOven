@@ -2,6 +2,7 @@ package com.george.mydeliciousoven;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,8 +49,10 @@ public class StepsRecyclerAdapter extends RecyclerView.Adapter<StepsRecyclerAdap
         Steps step = stepsList.get(position);
 
         holder.smallSteps.setText(step.getShortDescription());
+
         if (step.getThumbnailURL() != null && !step.getThumbnailURL().isEmpty()) {
             Picasso.with(mContext).load(step.getThumbnailURL()).error(R.drawable.sugar_free).into(holder.imageThumb);
+            Log.e("stepsADAPTER",step.getThumbnailURL());
         }else{
             Picasso.with(mContext).load(R.drawable.sugar_free).into(holder.imageThumb);
         }

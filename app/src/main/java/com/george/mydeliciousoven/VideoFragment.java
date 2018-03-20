@@ -147,21 +147,25 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
         instructionsOfVideoTextView.setText(descriptionPassed);
         videoTextView.setText(videoPassed);
 
-        if (!thumbnailPassed.equals("") && !thumbnailPassed.endsWith(".mp4")) {
+        if (!thumbnailPassed.equals("") && !thumbnailPassed.endsWith(".mp4")&& videoPassed.equals("")) {
+            //Check if thumbnail is not empty and is not a video (we presume that it is an image)
             Picasso.with(getActivity()).load(thumbnailPassed).into(imageAboveExo);
             mExoplayerView.setVisibility(View.INVISIBLE);
             Log.e("thumbAvalable", "thumbAvailable");
         } else if (videoPassed.equals("") && descriptionPassed.equals("")) {
+            //First time open master detail flow where there is no step selected already
             Log.e("thumbAvalableDES", "thumbAvailableDES");
             mExoplayerView.setVisibility(View.INVISIBLE);
             Picasso.with(getActivity()).load(R.drawable.sugar_free).into(imageAboveExo);
             cardView.setVisibility(View.INVISIBLE);
         } else if (videoPassed.equals("")) {
+            //where there is no video available we bring imageaboveexo in front and we display a "No video available screen"
             mExoplayerView.setVisibility(View.INVISIBLE);
             Log.e("thumbAvalableNOT", "thumbAvailableNOT");
         } else if (!thumbnailPassed.equals("") && !thumbnailPassed.endsWith(".mp4") && !videoPassed.equals("")) {
+            //Where there is also a thumbnail and video we hide the image
             imageAboveExo.setVisibility(View.INVISIBLE);
-            Log.e("thumbAvalableYES", "thumbAvailableYES");
+            Log.e("thumbAvailableYES", "thumbAvailableYES");
         }
 
         // Initialize the Media Session.
