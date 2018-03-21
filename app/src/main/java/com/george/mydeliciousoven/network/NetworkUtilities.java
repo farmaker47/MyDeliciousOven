@@ -1,6 +1,5 @@
 package com.george.mydeliciousoven.network;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -22,7 +21,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by farmaker1 on 12/03/2018.
@@ -31,8 +29,6 @@ import java.util.List;
 public class NetworkUtilities {
 
     private static final String LOG_TAG = NetworkUtilities.class.getSimpleName();
-    private String name,servings,image;
-
 
     /**
      * Make an HTTP request to the given URL and return a String as the response.
@@ -51,7 +47,7 @@ public class NetworkUtilities {
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setReadTimeout(10000 /* milliseconds */);
             urlConnection.setConnectTimeout(15000 /* milliseconds */);
-            if(urlConnection!=null&&context!=null){
+            if (urlConnection != null && context != null) {
                 urlConnection.setRequestMethod(context.getString(R.string.get));
             }
             urlConnection.connect();
@@ -61,16 +57,16 @@ public class NetworkUtilities {
             if (urlConnection.getResponseCode() == 200) {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readFromStream(inputStream);
-                if (context!=null) {
+                if (context != null) {
                     Log.d(context.getString(R.string.success), context.getString(R.string.twoHundred));
                 }
             } else {
-                if (context!=null) {
+                if (context != null) {
                     Log.d(LOG_TAG, context.getString(R.string.errorResponseCode) + urlConnection.getResponseCode());
                 }
             }
         } catch (IOException e) {
-            if (context!=null) {
+            if (context != null) {
                 Log.e(LOG_TAG, context.getString(R.string.problemRetrivingJson), e);
             }
         } finally {
@@ -105,14 +101,13 @@ public class NetworkUtilities {
         return output.toString();
     }
 
-    //here fron the Json response we retrieve the information that we need name, ingredients, stepse.t.c
+    //here fron the Json response we retrieve the information that we need name, ingredients, steps e.t.c
     public static ArrayList<Recipes> getValuesFromJson(String JSONdata, Context context) {
 
         if (JSONdata == null) {
             return null;
         }
 
-        /*ContentValues[] recipesContentValues = null;*/
         ArrayList<Recipes> recipes = new ArrayList<>();
 
         try {
@@ -120,101 +115,14 @@ public class NetworkUtilities {
 
             for (int i = 0; i < root.length(); i++) {
 
-                String name,servings,image,id2;
+                String name, servings, image, id2;
                 JSONObject recipesObject = root.getJSONObject(i);
                 id2 = recipesObject.optString("id");
                 name = recipesObject.optString("name");
                 servings = recipesObject.optString("servings");
                 image = recipesObject.getString("image");
-                recipes.add(new Recipes(id2,name,servings,image));
 
-
-                /*if (recipesObject.optString("name").equals("Brownies")){
-                    //Get info from ingredients
-                    JSONArray ingredientsArray = recipesObject.getJSONArray("ingredients");
-                    for (int j = 0; j < ingredientsArray.length(); j++){
-
-                        JSONObject singleIngredientObject = ingredientsArray.getJSONObject(j);
-                        quantity= singleIngredientObject.optString("quantity");
-                        measure = singleIngredientObject.optString("measure");
-                        ingredient = singleIngredientObject.optString("ingredient");
-
-                        ingrediento.add(new Ingredients(quantity,measure,ingredient));
-                        Ingredients iN = ingrediento.get(0);
-                        Log.e("ingredients",iN.getQuantity());
-
-                    }
-                }*/
-
-
-                /*if (recipesObject.optString("name").equals("Brownies")){
-                    //Get the steps
-                    JSONArray stepsArray = recipesObject.getJSONArray("steps");
-                    for(int k = 0; k < stepsArray.length(); k++){
-
-                        JSONObject stepsObject = stepsArray.getJSONObject(k);
-                        id = stepsObject.optString("id");
-                        shortDescription = stepsObject.optString("shortDescription");
-                        description = stepsObject.optString("description");
-                        videoURL = stepsObject.optString("videoURL");
-                        thumbnailURL = stepsObject.optString("thumbnailURL");
-
-                        stepi.add(new Steps(id,shortDescription,description,videoURL,thumbnailURL));
-                        Steps sT = stepi.get(0);
-                        Log.e("Steeeeeep",sT.getVideoURL());
-                    }
-                }*/
-
-
-
-
-
-
-
-                /*String title;
-                String releaseDate;
-                String imagePath;
-                String overview;
-                String rating;
-                String specialId;
-                String backImage;
-
-                //we use optString in case there is no input
-                JSONObject movieObject = movieResultsArray.getJSONObject(i);
-                title = movieObject.optString("title");
-                specialId = movieObject.optString("id");
-                releaseDate = movieObject.optString("release_date");
-                imagePath = movieObject.optString("poster_path");
-                overview = movieObject.optString("overview");
-                rating = movieObject.optString("vote_average");
-                backImage = movieObject.optString("backdrop_path");*/
-
-                /*if (parameter.equals(context.getResources().getString(R.string.popularString))) {
-
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_TITLE, title);
-                    contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_RELEASE_DATE, releaseDate);
-                    contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_SPECIAL_ID, specialId);
-                    contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_POSTER_URL, imagePath);
-                    contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_OVERVIEW, overview);
-                    contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_VOTE_AVERAGE, rating);
-                    contentValues.put(MustWatchMoviesContract.MoviePopular.COLUMN_IMAGEBACKGROUND, backImage);
-
-                    recipesContentValues[i] = contentValues;
-                } else if (parameter.equals(context.getResources().getString(R.string.topRatedString))) {
-
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_TITLE, title);
-                    contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_RELEASE_DATE, releaseDate);
-                    contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_POSTER_URL, imagePath);
-                    contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_SPECIAL_ID, specialId);
-                    contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_OVERVIEW, overview);
-                    contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_VOTE_AVERAGE, rating);
-                    contentValues.put(MustWatchMoviesContract.MovieTopRated.COLUMN_IMAGEBACKGROUND, backImage);
-
-                    recipesContentValues[i] = contentValues;
-                }*/
-
+                recipes.add(new Recipes(id2, name, servings, image));
             }
         } catch (JSONException e) {
             Log.d(LOG_TAG, context.getString(R.string.problemParsingJson), e);
@@ -224,7 +132,7 @@ public class NetworkUtilities {
 
     public static ArrayList<Ingredients> getValuesFromJsonForIngredients(String jsonResultsIngredients, FragmentActivity activity, String recipeName) {
 
-        if(jsonResultsIngredients == null){
+        if (jsonResultsIngredients == null) {
             return null;
         }
 
@@ -239,20 +147,17 @@ public class NetworkUtilities {
 
                 JSONObject recipesObject = root.getJSONObject(i);
 
-                if (recipesObject.optString("name").equals(recipeName)){
+                if (recipesObject.optString("name").equals(recipeName)) {
                     //Get info from ingredients
                     JSONArray ingredientsArray = recipesObject.getJSONArray("ingredients");
-                    for (int j = 0; j < ingredientsArray.length(); j++){
+                    for (int j = 0; j < ingredientsArray.length(); j++) {
 
                         JSONObject singleIngredientObject = ingredientsArray.getJSONObject(j);
-                        quantity= singleIngredientObject.optString("quantity");
+                        quantity = singleIngredientObject.optString("quantity");
                         measure = singleIngredientObject.optString("measure");
                         ingredient = singleIngredientObject.optString("ingredient");
 
-                        ingrediento.add(new Ingredients(quantity,measure,ingredient));
-                        Ingredients iN = ingrediento.get(0);
-                        Log.e("ingredientsFragment",iN.getQuantity());
-
+                        ingrediento.add(new Ingredients(quantity, measure, ingredient));
                     }
                 }
             }
@@ -264,7 +169,7 @@ public class NetworkUtilities {
 
     public static ArrayList<Steps> getValuesFromJsonForSteps(String jsonResultsSteps, FragmentActivity activity, String recipeName) {
 
-        if(jsonResultsSteps == null){
+        if (jsonResultsSteps == null) {
             return null;
         }
 
@@ -276,12 +181,12 @@ public class NetworkUtilities {
             for (int i = 0; i < root.length(); i++) {
 
                 JSONObject recipesObject = root.getJSONObject(i);
-                String id = null,shortDescription = null,description = null,videoURL = null,thumbnailURL = null;
+                String id = null, shortDescription = null, description = null, videoURL = null, thumbnailURL = null;
 
-                if (recipesObject.optString("name").equals(recipeName)){
+                if (recipesObject.optString("name").equals(recipeName)) {
                     //Get the steps
                     JSONArray stepsArray = recipesObject.getJSONArray("steps");
-                    for(int k = 0; k < stepsArray.length(); k++){
+                    for (int k = 0; k < stepsArray.length(); k++) {
 
                         JSONObject stepsObject = stepsArray.getJSONObject(k);
                         id = stepsObject.optString("id");
@@ -290,7 +195,7 @@ public class NetworkUtilities {
                         videoURL = stepsObject.optString("videoURL");
                         thumbnailURL = stepsObject.getString("thumbnailURL");
 
-                        stepsOfOven.add(new Steps(id,shortDescription,description,videoURL,thumbnailURL));
+                        stepsOfOven.add(new Steps(id, shortDescription, description, videoURL, thumbnailURL));
                     }
                 }
             }

@@ -51,7 +51,6 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
     private boolean mTwoPaneDetails;
     private Bundle bundleForVideo;
     private ActionBar ab;
-    /*@BindView(R.id.linear_master_detail_tablet)LinearLayout linearForTablet;*/
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.scrollOfFrameLayouts)
@@ -94,6 +93,7 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
         // If there is a network connection, fetch data
         if (networkInfo != null && networkInfo.isConnected()) {
 
+            //Not used Butterknife for this comparison
             if (findViewById(R.id.linear_master_detail_tablet) != null && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
 
                 mTwoPaneDetails = true;
@@ -127,7 +127,7 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
                     // Add the fragment to its container using a transaction
                     fragmentManager.beginTransaction().add(R.id.video_details_container_tablet, videoFragm).commit();
                 } else {
-                    Log.e("TwoPaneDescription", "TwoPaneDescription");
+
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
                     playbackPositionOnresume = sharedPreferences.getLong(PLAYBACK_POSITION, 0);
                     currentWindowOnResume = sharedPreferences.getInt(CURRENT_WINDOW, 0);
@@ -266,13 +266,4 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
         Toast.makeText(RecipeDetails.this, recipeName + " " + getString(R.string.isDesired), Toast.LENGTH_LONG).show();
 
     }
-
-    /*@Override
-    protected void onResume() {
-        super.onResume();
-        int height = getWindowManager().getDefaultDisplay().getHeight();
-        RelativeLayout.LayoutParams layout = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
-                height = getWindowManager().getDefaultDisplay().getHeight());
-        mScrollView.setLayoutParams(layout);
-    }*/
 }

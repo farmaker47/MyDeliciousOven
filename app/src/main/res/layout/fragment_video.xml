@@ -18,10 +18,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/exoplayerHeight"
                 android:src="@drawable/no_video"/>
+
             <com.google.android.exoplayer2.ui.SimpleExoPlayerView
                 android:id="@+id/exoPlayerView"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/exoplayerHeight"></com.google.android.exoplayer2.ui.SimpleExoPlayerView>
+                android:layout_height="@dimen/exoplayerHeight" />
 
         </RelativeLayout>
 

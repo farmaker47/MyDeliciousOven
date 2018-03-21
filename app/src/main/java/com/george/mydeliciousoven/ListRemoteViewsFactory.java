@@ -1,6 +1,5 @@
 package com.george.mydeliciousoven;
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
@@ -9,7 +8,7 @@ import android.widget.RemoteViewsService;
 public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     private static String ingredientsForList = "";
-    private RemoteViews views,viewsList;
+    private RemoteViews views;
 
     Context mContext;
 
@@ -41,7 +40,6 @@ public class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     public RemoteViews getViewAt(int position) {
 
         views = new RemoteViews(mContext.getPackageName(), R.layout.oven_widget_provider);
-        viewsList = new RemoteViews(mContext.getPackageName(), R.layout.widget_list_view);
 
         if (!ingredientsForList.equals("")) {
             views.setTextViewText(R.id.appwidget_text, ingredientsForList);

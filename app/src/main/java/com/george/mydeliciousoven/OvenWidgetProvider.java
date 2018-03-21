@@ -5,7 +5,6 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -51,7 +50,6 @@ public class OvenWidgetProvider extends AppWidgetProvider {
         intent.putExtra(TEXT_FOR_LIST_VIEW, ingredients);
         views.setRemoteAdapter(R.id.widget_list_view, intent);
         //set text to header
-        Log.e("finalString", recipeName);
         views.setTextViewText(R.id.headerForWidget, context.getString(R.string.ingredients_for) + " " + recipeName);
         views.setViewVisibility(R.id.headerForWidget, View.VISIBLE);
 

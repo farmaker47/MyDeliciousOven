@@ -1,21 +1,16 @@
 package com.george.mydeliciousoven;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.george.mydeliciousoven.network.NetworkUtilities;
@@ -37,12 +32,12 @@ import butterknife.ButterKnife;
  * create an instance of this fragment.
  */
 public class IngredientsFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
+
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final int INGREDIENTS_LOADER = 44;
-    private String jsonResultsIngredients,recipeName,stringForExpandable;
+    private String jsonResultsIngredients, recipeName, stringForExpandable;
     private static final String RECIPE_NAME_TO_PASS = "recipe_name_to_pass";
 
     private String mParam1;
@@ -50,7 +45,8 @@ public class IngredientsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    @BindView(R.id.textViewIngredient) TextView mTextIngredients;
+    @BindView(R.id.textViewIngredient)
+    TextView mTextIngredients;
 
     public IngredientsFragment() {
         // Required empty public constructor
@@ -64,7 +60,6 @@ public class IngredientsFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment IngredientsFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static IngredientsFragment newInstance(String param1, String param2) {
         IngredientsFragment fragment = new IngredientsFragment();
         Bundle args = new Bundle();
@@ -90,7 +85,7 @@ public class IngredientsFragment extends Fragment {
         recipeName = this.getArguments().getString(RECIPE_NAME_TO_PASS);
 
         View rootView = inflater.inflate(R.layout.fragment_ingredients, container, false);
-        ButterKnife.bind(this,rootView);
+        ButterKnife.bind(this, rootView);
 
         //Upon creation we check if there is internet connection
         ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -105,8 +100,6 @@ public class IngredientsFragment extends Fragment {
             } else {
                 loaderManager.restartLoader(INGREDIENTS_LOADER, null, mLoaderIngredients);
             }
-        } else {
-            ///Toast No internet
         }
 
         stringForExpandable = "";
@@ -143,7 +136,7 @@ public class IngredientsFragment extends Fragment {
 
                     ArrayList<Ingredients> ingredientsNameList = new ArrayList<>();
                     try {
-                        ingredientsNameList = NetworkUtilities.getValuesFromJsonForIngredients(jsonResultsIngredients, getActivity(),recipeName);
+                        ingredientsNameList = NetworkUtilities.getValuesFromJsonForIngredients(jsonResultsIngredients, getActivity(), recipeName);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -158,8 +151,6 @@ public class IngredientsFragment extends Fragment {
         public void onLoadFinished(Loader loader, Object data) {
 
             ArrayList<Ingredients> arrayIngr = (ArrayList<Ingredients>) data;
-           /* Ingredients ingo = arrayIngr.get(0);
-            Log.e("FragmentQuantity",ingo.getQuantity());*/
 
             if (arrayIngr.size() > 0) {
                 for (int j = 0; j < arrayIngr.size(); j++) {
@@ -182,15 +173,7 @@ public class IngredientsFragment extends Fragment {
                 mTextIngredients.setText(getResources().getString(R.string.noIngredients));
             }
 
-
-            /*for(Ingredients ingredients:arrayIngr){
-
-                mTextIngredients.append(ingredients.getQuantity()+ingredients.getMeasure()+ingredients.getIngredient());
-
-            }*/
-
             mListener.onFragmentInteractionIngredients(stringForExpandable);
-
         }
 
         @Override
@@ -199,10 +182,6 @@ public class IngredientsFragment extends Fragment {
         }
     };
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -210,7 +189,7 @@ public class IngredientsFragment extends Fragment {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + getString(R.string.mustImplementOnFrIntListener));
         }
     }
 

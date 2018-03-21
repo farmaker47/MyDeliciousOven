@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.widget.Toast;
 
 import butterknife.BindView;
@@ -26,13 +25,6 @@ public class VideoActivity extends AppCompatActivity implements VideoFragment.On
     private static final String THUMBNAIL_OF_STEP = "thumbnail_of_step";
     private String descriptionPassed, videoPassed, thumbNailPassed;
     private static final String LOG_TAG = VideoActivity.class.getSimpleName();
-
-    /*private long playbackPosition;
-    private int currentWindow;
-    private boolean playWhenReady = true;
-    private static final String PLAYBACK_POSITION = "playback_position";
-    private static final String CURRENT_WINDOW = "current_window";
-    private static final String PLAY_WHEN_READY = "play_when_ready";*/
 
     private ActionBar ab;
     @BindView(R.id.toolbar)
@@ -54,15 +46,12 @@ public class VideoActivity extends AppCompatActivity implements VideoFragment.On
                 Intent intent = getIntent();
                 if (intent.hasExtra(DESCRIPTION_OF_STEP)) {
                     descriptionPassed = intent.getStringExtra(DESCRIPTION_OF_STEP);
-                    Log.e(LOG_TAG, descriptionPassed);
                 }
                 if (intent.hasExtra(VIDEO_OF_STEP)) {
                     videoPassed = intent.getStringExtra(VIDEO_OF_STEP);
-                    Log.e(LOG_TAG, videoPassed);
                 }
                 if (intent.hasExtra(THUMBNAIL_OF_STEP)) {
                     thumbNailPassed = intent.getStringExtra(THUMBNAIL_OF_STEP);
-                    Log.e(LOG_TAG + LOG_TAG, thumbNailPassed);
                 }
 
                 FragmentManager fragmentManager = getSupportFragmentManager();

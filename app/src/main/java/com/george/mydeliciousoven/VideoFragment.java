@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,7 +83,8 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
     SimpleExoPlayerView mExoplayerView;
     @BindView(R.id.imageAboveExoplayer)
     ImageView imageAboveExo;
-    @BindView(R.id.cardVideoFragment) CardView cardView;
+    @BindView(R.id.cardVideoFragment)
+    CardView cardView;
 
     private OnFragmentVideoInteractionListener mListener;
 
@@ -125,6 +125,7 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
         ButterKnife.bind(this, rootViewVideo);
 
         if (savedInstanceState != null) {
+            //after rotation of VideoActivity
             descriptionPassed = savedInstanceState.getString(DESCRIPTION_STATE_FOR_FRAGMENT);
             videoPassed = savedInstanceState.getString(VIDEO_STATE_FOR_FRAGMENT);
             thumbnailPassed = savedInstanceState.getString(THUMB_STATE_FOR_FRAGMENT);
@@ -132,7 +133,9 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
             playbackPosition = savedInstanceState.getLong(PLAYBACK_POSITION);
             currentWindow = savedInstanceState.getInt(CURRENT_WINDOW);
             playWhenReady = savedInstanceState.getBoolean(PLAY_WHEN_READY);
-        }else{
+        } else {
+            //When videoActivity is in Landscape mode and we go back to Master detail flow
+            //this way we see the video playing at the same second as before
             descriptionPassed = this.getArguments().getString(DESCRIPTION_FOR_FRAGMENT);
             videoPassed = this.getArguments().getString(VIDEO_FOR_FRAGMENT);
             thumbnailPassed = this.getArguments().getString(THUMBNAIL_FOR_FRAGMENT);
@@ -145,7 +148,7 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
         instructionsOfVideoTextView.setText(descriptionPassed);
         videoTextView.setText(videoPassed);
 
-        if (!thumbnailPassed.equals("") && !thumbnailPassed.endsWith(".mp4")&& videoPassed.equals("")) {
+        if (!thumbnailPassed.equals("") && !thumbnailPassed.endsWith(".mp4") && videoPassed.equals("")) {
             //Check if thumbnail is not empty and is NOT a video (we presume that it is an image)
             //Also we display the thumbnail image in Stepsrecycler adapter at each recipe step
             Picasso.with(getActivity()).load(thumbnailPassed).into(imageAboveExo);
@@ -187,7 +190,7 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
             mListener = (OnFragmentVideoInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + getString(R.string.mustImplementOnFrIntListener));
         }
     }
 
@@ -226,12 +229,12 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
         //when going back to Recipedetails to seek video position
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putLong(PLAYBACK_POSITION,playbackPosition);
-        editor.putInt(CURRENT_WINDOW,currentWindow);
+        editor.putLong(PLAYBACK_POSITION, playbackPosition);
+        editor.putInt(CURRENT_WINDOW, currentWindow);
         editor.putBoolean(PLAY_WHEN_READY, playWhenReady);
-        editor.putString(DESCRIPTION_FOR_FRAGMENT,descriptionPassed);
-        editor.putString(THUMBNAIL_FOR_FRAGMENT,thumbnailPassed);
-        editor.putString(VIDEO_FOR_FRAGMENT,videoPassed);
+        editor.putString(DESCRIPTION_FOR_FRAGMENT, descriptionPassed);
+        editor.putString(THUMBNAIL_FOR_FRAGMENT, thumbnailPassed);
+        editor.putString(VIDEO_FOR_FRAGMENT, videoPassed);
         editor.apply();
     }
 
@@ -328,7 +331,7 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentVideoInteractionListener {
-        void onFragmentInteraction(long playbackposition, int currentWindow, boolean playwhenready,String description,String thumbnail,String video);
+        void onFragmentInteraction(long playbackposition, int currentWindow, boolean playwhenready, String description, String thumbnail, String video);
     }
 
 

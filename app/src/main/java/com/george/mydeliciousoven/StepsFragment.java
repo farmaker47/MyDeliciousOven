@@ -1,13 +1,10 @@
 package com.george.mydeliciousoven;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -15,11 +12,9 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.george.mydeliciousoven.network.NetworkUtilities;
 
@@ -40,7 +35,7 @@ import butterknife.ButterKnife;
  * create an instance of this fragment.
  */
 public class StepsFragment extends Fragment implements StepsRecyclerAdapter.StepsClickItemListener {
-    // TODO: Rename parameter arguments, choose names that match
+
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -52,7 +47,6 @@ public class StepsFragment extends Fragment implements StepsRecyclerAdapter.Step
     private static final String BUNDLE_RECYCLER_LAYOUT = "recycler_layout";
     private LinearLayoutManager layoutManager;
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     private StepsRecyclerAdapter mStepsAdapter;
@@ -78,7 +72,7 @@ public class StepsFragment extends Fragment implements StepsRecyclerAdapter.Step
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(String string,String string2,String string3);
+        void onFragmentInteraction(String string, String string2, String string3);
     }
 
     /**
@@ -89,7 +83,6 @@ public class StepsFragment extends Fragment implements StepsRecyclerAdapter.Step
      * @param param2 Parameter 2.
      * @return A new instance of fragment StepsFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static StepsFragment newInstance(String param1, String param2) {
         StepsFragment fragment = new StepsFragment();
         Bundle args = new Bundle();
@@ -134,10 +127,9 @@ public class StepsFragment extends Fragment implements StepsRecyclerAdapter.Step
         }
 
         recipeName = this.getArguments().getString(RECIPE_NAME_TO_PASS);
-        Log.e("stepsFragment", recipeName);
 
         mRecyclerSteps.setHasFixedSize(true);
-        layoutManager  = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerSteps.setLayoutManager(layoutManager);
         mStepsList = new ArrayList<>();
         mStepsAdapter = new StepsRecyclerAdapter(getActivity(), mStepsList, this);
@@ -157,7 +149,7 @@ public class StepsFragment extends Fragment implements StepsRecyclerAdapter.Step
                 loaderManager.restartLoader(STEPS_LOADER, null, mLoaderSteps);
             }
         } else {
-            ///Toast No internet
+            ///Toast No internet or not
         }
 
 
@@ -210,7 +202,7 @@ public class StepsFragment extends Fragment implements StepsRecyclerAdapter.Step
             mStepsAdapter.setStepsData(mStepsList);
 
             //restore recycler view position
-            if(savedRecyclerLayoutState!=null){
+            if (savedRecyclerLayoutState != null) {
                 layoutManager.onRestoreInstanceState(savedRecyclerLayoutState);
             }
 
@@ -223,7 +215,6 @@ public class StepsFragment extends Fragment implements StepsRecyclerAdapter.Step
     };
 
 
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -231,7 +222,7 @@ public class StepsFragment extends Fragment implements StepsRecyclerAdapter.Step
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + getString(R.string.mustImplementOnFrIntListener));
         }
     }
 
@@ -244,8 +235,6 @@ public class StepsFragment extends Fragment implements StepsRecyclerAdapter.Step
     @Override
     public void onListItemClick(int itemIndex) {
         Steps sted = mStepsList.get(itemIndex);
-        mListener.onFragmentInteraction(sted.getDescription(),sted.getVideoURL(),sted.getThumbnailURL());
+        mListener.onFragmentInteraction(sted.getDescription(), sted.getVideoURL(), sted.getThumbnailURL());
     }
-
-
 }

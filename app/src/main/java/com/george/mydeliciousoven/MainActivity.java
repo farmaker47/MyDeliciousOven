@@ -102,8 +102,6 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.R
         // Get the IdlingResource instance
         getIdlingResource();
 
-        //Because json file from internet neverchanges I decide not to call everytime the loader to fetch data from internet.. So
-        //I will fetch the data once and then app will query the SQLIte database
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         firstTimeOpened = sharedPreferences.getInt(FIRST_TIME_OPENED, 0);
 
@@ -146,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.R
         } else {
             //Query the already ready database with recipes
             //Not implemented as not desired
+            //We will give firstTimeOpened value = 1
         }
 
         setSupportActionBar(toolbar);

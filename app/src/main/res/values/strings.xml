@@ -24,4 +24,5 @@
     <string name="isDesired">is now a desired recipe!</string>
     <string name="recipesVideo">Recipe\'s step video</string>
     <string name="please_connect_to_internet">Please connect to internet to get info about the recipes!</string>
+    <string name="mustImplementOnFrIntListener">must implement OnFragmentInteractionListener</string>
 </resources>

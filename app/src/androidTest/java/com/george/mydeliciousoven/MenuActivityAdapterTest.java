@@ -12,13 +12,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.anything;
 
 /**
  * Created by farmaker1 on 16/03/2018.
@@ -43,7 +41,7 @@ public class MenuActivityAdapterTest {
     }
 
     @Test
-    public void clickAdapterViewPosition_opensDetailScreen(){
+    public void clickAdapterViewPosition_opensDetailScreen() {
 
         //find the main recycler view and click position 0
         onView(withId(R.id.mainRecyclerView))
