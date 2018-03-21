@@ -252,7 +252,9 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
 
     @OnClick(R.id.fab)
     public void clickFabToWidget(View view) {
-        updateWidgetWithIngredients(ingredientsFromFragment, recipeName);
+        if (ingredientsFromFragment!=null) {
+            updateWidgetWithIngredients(ingredientsFromFragment, recipeName);
+        }
     }
 
     private void updateWidgetWithIngredients(String ingredienti, String recipeName) {
