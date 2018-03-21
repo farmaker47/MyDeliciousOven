@@ -2,9 +2,12 @@ package com.george.mydeliciousoven;
 
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -39,6 +42,8 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
     private static final String CURRENT_WINDOW = "current_window";
     private static final String PLAY_WHEN_READY = "play_when_ready";
 
+    private static final String ARTICLE_SCROLL_POSITION = "article_scroll_position";
+
     private String recipeName, ingredientsFromFragment;
     private String descriptionPassed, videoPassed;
     private String thumbnailPassed = "";
@@ -63,7 +68,7 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
 
         //trying to save scroll position
         if (savedInstanceState != null) {
-            final int[] position = savedInstanceState.getIntArray("ARTICLE_SCROLL_POSITION");
+            final int[] position = savedInstanceState.getIntArray(ARTICLE_SCROLL_POSITION);
             if (position != null)
                 mScrollView.post(new Runnable() {
                     public void run() {
@@ -77,117 +82,127 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
         Intent intent = getIntent();
         if (intent.hasExtra(RECIPE_NAME_TO_PASS)) {
             recipeName = intent.getStringExtra(RECIPE_NAME_TO_PASS);
-            Log.e(LOG_TAG, recipeName);
+            Log.d(LOG_TAG, recipeName);
         }
 
         ab = getSupportActionBar();
         ab.setTitle(recipeName);
 
-        if (findViewById(R.id.linear_master_detail_tablet) != null && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        //Upon creation we check if there is internet connection
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        // If there is a network connection, fetch data
+        if (networkInfo != null && networkInfo.isConnected()) {
 
-            mTwoPaneDetails = true;
-            Log.e("TwoPane", "twopane");
+            if (findViewById(R.id.linear_master_detail_tablet) != null && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
 
-            if (savedInstanceState == null) {
-                Log.e("TwoPane", "twopaneNULL");
-                //the first two fragments in the left
-                FragmentManager fragmentManager = getSupportFragmentManager();
+                mTwoPaneDetails = true;
 
-                Bundle bundle = new Bundle();
-                bundle.putString(RECIPE_NAME_TO_PASS, recipeName);
-                // Creating a new ingredients fragment
-                IngredientsFragment ingredFragment = new IngredientsFragment();
-                ingredFragment.setArguments(bundle);
-                // Add the fragment to its container using a transaction
-                fragmentManager.beginTransaction().add(R.id.ingredients_container_tablet, ingredFragment).commit();
+                if (savedInstanceState == null) {
+                    //the first two fragments in the left
+                    FragmentManager fragmentManager = getSupportFragmentManager();
 
-                //Steps  fragment
-                StepsFragment stepiFragment = new StepsFragment();
-                stepiFragment.setArguments(bundle);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(RECIPE_NAME_TO_PASS, recipeName);
+                    // Creating a new ingredients fragment
+                    IngredientsFragment ingredFragment = new IngredientsFragment();
+                    ingredFragment.setArguments(bundle);
+                    // Add the fragment to its container using a transaction
+                    fragmentManager.beginTransaction().add(R.id.ingredients_container_tablet, ingredFragment).commit();
 
-                fragmentManager.beginTransaction().add(R.id.steps_container_tablet, stepiFragment).commit();
+                    //Steps  fragment
+                    StepsFragment stepiFragment = new StepsFragment();
+                    stepiFragment.setArguments(bundle);
 
-                //the video fragment in the right
-                Bundle bundle2 = new Bundle();
-                bundle2.putString(DESCRIPTION_FOR_FRAGMENT, "");
-                bundle2.putString(VIDEO_FOR_FRAGMENT, "");
-                bundle2.putString(THUMBNAIL_FOR_FRAGMENT, "");
+                    fragmentManager.beginTransaction().add(R.id.steps_container_tablet, stepiFragment).commit();
 
-                VideoFragment videoFragm = new VideoFragment();
-                videoFragm.setArguments(bundle2);
-                // Add the fragment to its container using a transaction
-                fragmentManager.beginTransaction().add(R.id.video_details_container_tablet, videoFragm).commit();
+                    //the video fragment in the right
+                    Bundle bundle2 = new Bundle();
+                    bundle2.putString(DESCRIPTION_FOR_FRAGMENT, "");
+                    bundle2.putString(VIDEO_FOR_FRAGMENT, "");
+                    bundle2.putString(THUMBNAIL_FOR_FRAGMENT, "");
+
+                    VideoFragment videoFragm = new VideoFragment();
+                    videoFragm.setArguments(bundle2);
+                    // Add the fragment to its container using a transaction
+                    fragmentManager.beginTransaction().add(R.id.video_details_container_tablet, videoFragm).commit();
+                } else {
+                    Log.e("TwoPaneDescription", "TwoPaneDescription");
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                    playbackPositionOnresume = sharedPreferences.getLong(PLAYBACK_POSITION, 0);
+                    currentWindowOnResume = sharedPreferences.getInt(CURRENT_WINDOW, 0);
+                    playWhenReadyOnResume = sharedPreferences.getBoolean(PLAY_WHEN_READY, true);
+                    descriptionPassed = sharedPreferences.getString(DESCRIPTION_FOR_FRAGMENT, "");
+                    videoPassed = sharedPreferences.getString(VIDEO_FOR_FRAGMENT, "");
+                    thumbnailPassed = sharedPreferences.getString(THUMBNAIL_FOR_FRAGMENT, "");
+                    //When coming from videoactivity landscape and we go to recipedetails landscape two pane
+                    //the video fragment in the right
+                    Bundle bundle3 = new Bundle();
+                    bundle3.putLong(PLAYBACK_POSITION, playbackPositionOnresume);
+                    bundle3.putInt(CURRENT_WINDOW, currentWindowOnResume);
+                    bundle3.putBoolean(PLAY_WHEN_READY, playWhenReadyOnResume);
+                    bundle3.putString(DESCRIPTION_FOR_FRAGMENT, descriptionPassed);
+                    bundle3.putString(VIDEO_FOR_FRAGMENT, videoPassed);
+                    bundle3.putString(THUMBNAIL_FOR_FRAGMENT, thumbnailPassed);
+
+                    VideoFragment videoFragm = new VideoFragment();
+                    videoFragm.setArguments(bundle3);
+                    // Add the fragment to its container using a transaction
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    fragmentManager.beginTransaction().replace(R.id.video_details_container_tablet, videoFragm).commit();
+                }
+
+            } else if (findViewById(R.id.linear_master_detail_tablet) != null && getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                if (savedInstanceState == null) {
+                    mTwoPaneDetails = false;
+
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString(RECIPE_NAME_TO_PASS, recipeName);
+                    // Creating a new ingredients fragment
+                    IngredientsFragment ingredFragment = new IngredientsFragment();
+                    ingredFragment.setArguments(bundle);
+                    // Add the fragment to its container using a transaction
+                    fragmentManager.beginTransaction().add(R.id.ingredients_container_tablet, ingredFragment).commit();
+
+                    //Steps  fragment
+                    StepsFragment stepiFragment = new StepsFragment();
+                    stepiFragment.setArguments(bundle);
+
+                    fragmentManager.beginTransaction().add(R.id.steps_container_tablet, stepiFragment).commit();
+                } else {
+                }
             } else {
-                Log.e("TwoPaneDescription", "TwoPaneDescription");
-                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                playbackPositionOnresume = sharedPreferences.getLong(PLAYBACK_POSITION, 0);
-                currentWindowOnResume = sharedPreferences.getInt(CURRENT_WINDOW, 0);
-                playWhenReadyOnResume = sharedPreferences.getBoolean(PLAY_WHEN_READY, true);
-                descriptionPassed = sharedPreferences.getString(DESCRIPTION_FOR_FRAGMENT, "");
-                videoPassed = sharedPreferences.getString(VIDEO_FOR_FRAGMENT, "");
-                thumbnailPassed = sharedPreferences.getString(THUMBNAIL_FOR_FRAGMENT, "");
-                //When coming from videoactivity landscape and we go to recipedetails landscape two pane
-                //the video fragment in the right
-                Bundle bundle3 = new Bundle();
-                bundle3.putLong(PLAYBACK_POSITION, playbackPositionOnresume);
-                bundle3.putInt(CURRENT_WINDOW, currentWindowOnResume);
-                bundle3.putBoolean(PLAY_WHEN_READY, playWhenReadyOnResume);
-                bundle3.putString(DESCRIPTION_FOR_FRAGMENT, descriptionPassed);
-                bundle3.putString(VIDEO_FOR_FRAGMENT, videoPassed);
-                bundle3.putString(THUMBNAIL_FOR_FRAGMENT, thumbnailPassed);
 
-                VideoFragment videoFragm = new VideoFragment();
-                videoFragm.setArguments(bundle3);
-                // Add the fragment to its container using a transaction
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.video_details_container_tablet, videoFragm).commit();
+                if (savedInstanceState == null) {
+                    mTwoPaneDetails = false;
+
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString(RECIPE_NAME_TO_PASS, recipeName);
+                    // Creating a new ingredients fragment
+                    IngredientsFragment ingredFragment = new IngredientsFragment();
+                    ingredFragment.setArguments(bundle);
+                    // Add the fragment to its container using a transaction
+                    fragmentManager.beginTransaction().add(R.id.ingredients_container, ingredFragment).commit();
+
+                    //Steps  fragment
+                    StepsFragment stepiFragment = new StepsFragment();
+                    stepiFragment.setArguments(bundle);
+
+                    fragmentManager.beginTransaction().add(R.id.steps_container, stepiFragment).commit();
+                } else {
+                }
+
             }
 
-        } else if (findViewById(R.id.linear_master_detail_tablet) != null && getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            if (savedInstanceState == null) {
-                mTwoPaneDetails = false;
 
-                FragmentManager fragmentManager = getSupportFragmentManager();
-
-                Bundle bundle = new Bundle();
-                bundle.putString(RECIPE_NAME_TO_PASS, recipeName);
-                // Creating a new ingredients fragment
-                IngredientsFragment ingredFragment = new IngredientsFragment();
-                ingredFragment.setArguments(bundle);
-                // Add the fragment to its container using a transaction
-                fragmentManager.beginTransaction().add(R.id.ingredients_container_tablet, ingredFragment).commit();
-
-                //Steps  fragment
-                StepsFragment stepiFragment = new StepsFragment();
-                stepiFragment.setArguments(bundle);
-
-                fragmentManager.beginTransaction().add(R.id.steps_container_tablet, stepiFragment).commit();
-            } else {
-            }
         } else {
-
-            if (savedInstanceState == null) {
-                mTwoPaneDetails = false;
-
-                FragmentManager fragmentManager = getSupportFragmentManager();
-
-                Bundle bundle = new Bundle();
-                bundle.putString(RECIPE_NAME_TO_PASS, recipeName);
-                // Creating a new ingredients fragment
-                IngredientsFragment ingredFragment = new IngredientsFragment();
-                ingredFragment.setArguments(bundle);
-                // Add the fragment to its container using a transaction
-                fragmentManager.beginTransaction().add(R.id.ingredients_container, ingredFragment).commit();
-
-                //Steps  fragment
-                StepsFragment stepiFragment = new StepsFragment();
-                stepiFragment.setArguments(bundle);
-
-                fragmentManager.beginTransaction().add(R.id.steps_container, stepiFragment).commit();
-            } else {
-            }
-
+            Toast.makeText(RecipeDetails.this, R.string.please_connect_to_internet, Toast.LENGTH_LONG).show();
         }
+
 
     }
 
@@ -222,7 +237,7 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putIntArray("ARTICLE_SCROLL_POSITION",
+        outState.putIntArray(ARTICLE_SCROLL_POSITION,
                 new int[]{mScrollView.getScrollX(), mScrollView.getScrollY()});
     }
 
@@ -252,4 +267,12 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
 
     }
 
+    /*@Override
+    protected void onResume() {
+        super.onResume();
+        int height = getWindowManager().getDefaultDisplay().getHeight();
+        RelativeLayout.LayoutParams layout = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                height = getWindowManager().getDefaultDisplay().getHeight());
+        mScrollView.setLayoutParams(layout);
+    }*/
 }

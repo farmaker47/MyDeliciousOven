@@ -36,6 +36,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Toast;
 
 import com.george.mydeliciousoven.idlingResource.SimpleIdlingResource;
 import com.george.mydeliciousoven.network.NetworkUtilities;
@@ -140,11 +141,11 @@ public class MainActivity extends AppCompatActivity implements MainGridAdapter.R
                     loaderManager.restartLoader(INTERNET_LOADER, queryBundle, mLoaderInternet);
                 }
             } else {
-                ///Toast No internet
+                Toast.makeText(MainActivity.this, R.string.please_connect_to_internet, Toast.LENGTH_LONG).show();
             }
         } else {
-            //Query the already ready database
-            //Not implemented as not
+            //Query the already ready database with recipes
+            //Not implemented as not desired
         }
 
         setSupportActionBar(toolbar);

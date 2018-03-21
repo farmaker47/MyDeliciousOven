@@ -74,7 +74,6 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
     private static final String TAG = VideoFragment.class.getSimpleName();
     private PlaybackStateCompat.Builder mStateBuilder;
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     @BindView(R.id.videoTextView)
@@ -134,7 +133,6 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
             currentWindow = savedInstanceState.getInt(CURRENT_WINDOW);
             playWhenReady = savedInstanceState.getBoolean(PLAY_WHEN_READY);
         }else{
-            Log.e("twopane","vidoeFromLandscape");
             descriptionPassed = this.getArguments().getString(DESCRIPTION_FOR_FRAGMENT);
             videoPassed = this.getArguments().getString(VIDEO_FOR_FRAGMENT);
             thumbnailPassed = this.getArguments().getString(THUMBNAIL_FOR_FRAGMENT);
@@ -148,24 +146,21 @@ public class VideoFragment extends Fragment implements ExoPlayer.EventListener {
         videoTextView.setText(videoPassed);
 
         if (!thumbnailPassed.equals("") && !thumbnailPassed.endsWith(".mp4")&& videoPassed.equals("")) {
-            //Check if thumbnail is not empty and is not a video (we presume that it is an image)
+            //Check if thumbnail is not empty and is NOT a video (we presume that it is an image)
+            //Also we display the thumbnail image in Stepsrecycler adapter at each recipe step
             Picasso.with(getActivity()).load(thumbnailPassed).into(imageAboveExo);
             mExoplayerView.setVisibility(View.INVISIBLE);
-            Log.e("thumbAvalable", "thumbAvailable");
         } else if (videoPassed.equals("") && descriptionPassed.equals("")) {
             //First time open master detail flow where there is no step selected already
-            Log.e("thumbAvalableDES", "thumbAvailableDES");
             mExoplayerView.setVisibility(View.INVISIBLE);
-            Picasso.with(getActivity()).load(R.drawable.sugar_free).into(imageAboveExo);
+            Picasso.with(getActivity()).load(R.drawable.bakin_green).into(imageAboveExo);
             cardView.setVisibility(View.INVISIBLE);
         } else if (videoPassed.equals("")) {
             //where there is no video available we bring imageaboveexo in front and we display a "No video available screen"
             mExoplayerView.setVisibility(View.INVISIBLE);
-            Log.e("thumbAvalableNOT", "thumbAvailableNOT");
         } else if (!thumbnailPassed.equals("") && !thumbnailPassed.endsWith(".mp4") && !videoPassed.equals("")) {
             //Where there is also a thumbnail and video we hide the image
             imageAboveExo.setVisibility(View.INVISIBLE);
-            Log.e("thumbAvailableYES", "thumbAvailableYES");
         }
 
         // Initialize the Media Session.
