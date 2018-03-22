@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.george.mydeliciousoven.network.NetworkUtilities;
 
@@ -149,9 +150,8 @@ public class StepsFragment extends Fragment implements StepsRecyclerAdapter.Step
                 loaderManager.restartLoader(STEPS_LOADER, null, mLoaderSteps);
             }
         } else {
-            ///Toast No internet or not
+            Toast.makeText(getActivity(), R.string.please_connect_to_internetSteps, Toast.LENGTH_LONG).show();
         }
-
 
         return stepsView;
     }

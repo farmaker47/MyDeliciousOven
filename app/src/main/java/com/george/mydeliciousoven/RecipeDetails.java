@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -86,6 +85,7 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
 
         ab = getSupportActionBar();
         ab.setTitle(recipeName);
+        ab.setDisplayHomeAsUpEnabled(true);
 
         //Upon creation we check if there is internet connection
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -94,11 +94,12 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
         if (networkInfo != null && networkInfo.isConnected()) {
 
             //Not used Butterknife for this comparison
-            if (findViewById(R.id.linear_master_detail_tablet) != null && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (findViewById(R.id.linear_master_detail_tablet) != null) {
 
                 mTwoPaneDetails = true;
 
                 if (savedInstanceState == null) {
+
                     //the first two fragments in the left
                     FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -152,27 +153,6 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
                     fragmentManager.beginTransaction().replace(R.id.video_details_container_tablet, videoFragm).commit();
                 }
 
-            } else if (findViewById(R.id.linear_master_detail_tablet) != null && getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                if (savedInstanceState == null) {
-                    mTwoPaneDetails = false;
-
-                    FragmentManager fragmentManager = getSupportFragmentManager();
-
-                    Bundle bundle = new Bundle();
-                    bundle.putString(RECIPE_NAME_TO_PASS, recipeName);
-                    // Creating a new ingredients fragment
-                    IngredientsFragment ingredFragment = new IngredientsFragment();
-                    ingredFragment.setArguments(bundle);
-                    // Add the fragment to its container using a transaction
-                    fragmentManager.beginTransaction().add(R.id.ingredients_container_tablet, ingredFragment).commit();
-
-                    //Steps  fragment
-                    StepsFragment stepiFragment = new StepsFragment();
-                    stepiFragment.setArguments(bundle);
-
-                    fragmentManager.beginTransaction().add(R.id.steps_container_tablet, stepiFragment).commit();
-                } else {
-                }
             } else {
 
                 if (savedInstanceState == null) {
@@ -193,17 +173,11 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
                     stepiFragment.setArguments(bundle);
 
                     fragmentManager.beginTransaction().add(R.id.steps_container, stepiFragment).commit();
-                } else {
                 }
-
             }
-
-
         } else {
             Toast.makeText(RecipeDetails.this, R.string.please_connect_to_internet, Toast.LENGTH_LONG).show();
         }
-
-
     }
 
 
@@ -252,7 +226,7 @@ public class RecipeDetails extends AppCompatActivity implements IngredientsFragm
 
     @OnClick(R.id.fab)
     public void clickFabToWidget(View view) {
-        if (ingredientsFromFragment!=null) {
+        if (ingredientsFromFragment != null) {
             updateWidgetWithIngredients(ingredientsFromFragment, recipeName);
         }
     }
